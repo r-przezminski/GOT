@@ -5,11 +5,15 @@ import App from './App'
 import router from './router'
 
 import axios from 'axios'
-import Loading from './components/Loading.vue'
-import Error from './components/Error.vue'
+
+import Loading from '@/components/Loading'
+import Error from '@/components/Error'
+import Search from '@/components/Search'
 
 Vue.component('loading', Loading)
 Vue.component('error', Error)
+Vue.component('search', Search)
+
 Vue.config.productionTip = false
 
 window.Event = new Vue()
