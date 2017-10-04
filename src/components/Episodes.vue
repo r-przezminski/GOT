@@ -4,7 +4,6 @@
 
 <script>
 export default {
-  name: 'episodes',
   data () {
     return {
       msg: 'Episodes'

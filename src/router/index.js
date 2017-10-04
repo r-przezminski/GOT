@@ -1,65 +1,67 @@
 import Vue    from 'vue'
 import Router from 'vue-router'
 
-import Home       from '@/components/Home'
-import Characters from '@/components/Characters'
-import Locations  from '@/components/Locations'
-import Continents from '@/components/Continents'
-import Cities     from '@/components/Cities'
-import Cultures   from '@/components/Cultures'
-import Houses     from '@/components/Houses'
-import Regions    from '@/components/Regions'
-import Episodes   from '@/components/Episodes'
-
 Vue.use(Router)
 
+function load (component) {
+  return () => System.import(`@/components/${component}`)
+}
+
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: Home
+      name: 'home',
+      component: load('Home')
     },
     {
       path: '/characters',
-      name: 'Characters',
-      component: Characters
+      name: 'characters',
+      component: load('Characters')
+      // children: [
+      //   { path: ':slug', name: 'character', component: Character }
+      // ]
+    },
+    {
+      path: '/character/:id',
+      name: 'character',
+      component: load('Character')
     },
     {
       path: '/locations',
-      name: 'Locations',
-      component: Locations
+      name: 'locations',
+      component: load('Locations')
     },
     {
       path: '/locations/continents',
-      name: 'Continents',
-      component: Continents
+      name: 'continents',
+      component: load('Continents'),
     },
     {
       path: '/locations/cities',
-      name: 'Cities',
-      component: Cities
+      name: 'cities',
+      component: load('Cities')
     },
     {
       path: '/cultures',
-      name: 'Cultures',
-      component: Cultures
+      name: 'cultures',
+      component: load('Cultures')
     },
     {
       path: '/houses',
-      name: 'Houses',
-      component: Houses
+      name: 'houses',
+      component: load('Houses')
     },
     {
-      path: '/regions',
-      name: 'Regions',
-      component: Regions
+      path: '/locations/regions',
+      name: 'regions',
+      component: load('Regions')
     },
-
     {
       path: '/episodes',
-      name: 'Episodes',
-      component: Episodes
+      name: 'episodes',
+      component: load('Episodes')
     }
   ]
 })
