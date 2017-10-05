@@ -12,30 +12,25 @@
       <div class="info">
         <h2>{{character.name}}</h2>
       </div>
-      <div class="info">
+      <div v-if="character.titles && character.titles.length > 0" class="info">
         <h4>Titles: </h4>
-        <p class="no-info" v-if="arrayLength.titlesLength == 0">No titles</p>
-        <p v-else v-for="title in character.titles" :key="title.index">{{title}},</p>
+        <p v-for="title in character.titles" :key="title.index">{{title}},</p>
       </div>
-      <div class="info">
+      <div v-if="character.house" class="info">
         <h4>House: </h4>
-        <p v-if="character.house">{{character.house}}</p>
-        <p class="no-info" v-else>No information</p>
+        <p>{{character.house}}</p>
       </div>
-      <div class="info">
+      <div v-if="character.dateOfBirth" class="info">
         <h4>Date of birth: </h4>
-        <p v-if="character.dateOfBirth">{{character.dateOfBirth}}</p>
-        <p class="no-info" v-else>No information</p>
+        <p>{{character.dateOfBirth}}</p>
       </div>
-      <div class="info">
+      <div v-if="character.dateOfDeath" class="info">
         <h4>Date of death: </h4>
-        <p v-if="character.dateOfDeath">{{character.dateOfDeath}}</p>
-        <p class="no-info" v-else>No information</p>
+        <p>{{character.dateOfDeath}}</p>
       </div>
-      <div class="info">
+      <div v-if="character.books && character.books.length > 0" class="info">
         <h4>Books: </h4>
-        <p class="no-info" v-if="arrayLength.booksLength == 0">No books</p>
-        <p v-else v-for="book in character.books" :key="book.index">{{book}},</p>
+        <p v-for="book in character.books" :key="book.index">{{book}},</p>
       </div>
     </div>
   </div>
@@ -46,24 +41,21 @@ export default {
   data() {
     return {
       character: [],
-      arrayLength: {
-        booksLength: 0,
-        titlesLength: 0
-      },
-      errors: []
     }
   },
-  created() {
-    axios.get('https://api.got.show/api/characters/byId/' + this.$route.params.id)
-      .then(response => {
-        this.character = response.data.data
-        this.arrayLength.booksLength = this.character.books.length
-        this.arrayLength.titlesLength = this.character.titles.length
-      })
-      .catch(e => {
-        this.errors.push(e)
-        console.log(this.errors);
-      })
+  methods: {
+    fetchCharacter() {
+      axios.get('https://api.got.show/api/characters/byId/' + this.$route.params.id)
+        .then(response => {
+          this.character = response.data.data;
+        })
+        .catch(error => {
+          Event.$emit('error', error.message);
+        })
+    }
+  },
+  mounted() {
+    this.fetchCharacter();
   }
 }
 </script>
@@ -83,7 +75,8 @@ export default {
 
 .character-image img {
   box-shadow: 5px 10px 20px rgba(0, 0, 0, .7);
-  border: 1px solid bisque;
+  border-bottom: 1px solid bisque;
+  border-right: 1px solid bisque;
   border-radius: 5px;
   max-width: 34vw;
   height: 420px;
@@ -92,7 +85,9 @@ export default {
 .character-info {
   padding: 50px 40px;
   width: 60%;
-  border: 1px solid bisque;
+  min-height: 420px;
+  border-bottom: 1px solid bisque;
+  border-right: 1px solid bisque;
   border-radius: 5px;
   background: rgba(0, 0, 0, 0.7);
   box-shadow: 5px 10px 20px rgba(0, 0, 0, .7);
@@ -127,6 +122,10 @@ export default {
 
 .no-info {
   color: indianred !important;
+}
+
+.search {
+  display: none;
 }
 
 @media only screen and (max-width: 700px) {

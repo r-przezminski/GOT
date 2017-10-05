@@ -12,37 +12,9 @@ export default {
       loading: true,
     }
   },
-  created() {
-    this.beforeAxiosRequest();
-    this.beforeAxiosResponse();
-  },
-  methods: {
-    beforeAxiosRequest() {
-      var self = this;
-      axios.interceptors.request.use(function(config) {
-        self.loading = true;
-        //emit ajax request
-        return config;
-      }, 
-      function(error) {
-        //emit error before ajax request
-        self.loading = false;
-        return Promise.reject(error);
-      });
-    },
-    beforeAxiosResponse() {
-      var self = this;
-      axios.interceptors.response.use(function(response) {
-        self.loading = false;
-        // emit ajax response
-        return response;
-      }, 
-      function(error) {
-        self.loading = false;
-        //emit error before ajax response
-        return Promise.reject(error);
-      });
-    }
+  created(){
+    Event.$on('showLoading', () => {this.loading = true});
+    Event.$on('hideLoading', () => {this.loading = false});
   }
 }
 </script>

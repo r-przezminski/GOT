@@ -54,6 +54,11 @@ export default new Router({
       component: load('Houses')
     },
     {
+      path: '/house/:id',
+      name: 'house',
+      component: load('House')
+    },
+    {
       path: '/locations/regions',
       name: 'regions',
       component: load('Regions')

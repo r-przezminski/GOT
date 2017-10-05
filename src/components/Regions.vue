@@ -1,28 +1,31 @@
 <template>
-    <div class="data-container">
-      <div class="data-items" v-for="region in regions" :key="region._id">
-        <p>{{region.name}}</p>
-      </div>
+  <div class="data-container">
+    <div class="data-items" v-for="region in regions" :key="region._id">
+      <p>{{region.name}}</p>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      regions: [],
-      errors: []
+      regions: []
     }
   },
-  created(){
-    axios.get('https://api.got.show/api/regions/')
-    .then(response => {
-      this.regions = response.data
-      console.log(response.data);
-    })
-    .catch(e => {
-      this.errors.push(e)
-    })
+  methods: {
+    fetchRegions() {
+      axios.get('https://api.got.show/api/regions/')
+        .then(response => {
+          this.regions = response.data;
+        })
+        .catch(error => {
+          Event.$emit('error', error.message);
+        })
+    }
+  },
+  mounted() {
+    this.fetchRegions();
   }
 }
 </script>

@@ -1,28 +1,42 @@
 <template>
-    <div class="data-container">
-      <div class="data-items" v-for="city in cities" :key="city._id">
-        <a target="_blank" :href="city.link">{{city.name}}</a>
-      </div>
+  <div class="data-container">
+    <div class="data-items" v-for="city in filteredCities" :key="city._id">
+      <a target="_blank" :href="city.link">{{city.name}}</a>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
       cities: [],
-      errors: []
+      search: ''
     }
   },
-  created(){
-    axios.get('https://api.got.show/api/cities/')
-    .then(response => {
-      this.cities = response.data
-      console.log(response.data);
-    })
-    .catch(e => {
-      this.errors.push(e)
-    })
+  methods: {
+    fetchCities() {
+      axios.get('https://api.got.show/api/cities/')
+        .then(response => {
+          this.cities = response.data;
+        })
+        .catch(error => {
+          Event.$emit('error', error.message);
+        })
+    }
+  },
+  computed: {
+    filteredCities() {
+      return this.cities.filter((city) => {
+        return city.name.toLowerCase().match(this.search.toLowerCase());
+      })
+    }
+  },
+  created() {
+    Event.$on('searching', (value) => { this.search = value })
+  },
+  mounted() {
+    this.fetchCities();
   }
 }
 </script>

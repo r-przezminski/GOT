@@ -1,29 +1,32 @@
 <template>
-    <div class="data-container">
-      <div class="data-items" v-for="continent in continents" :key="continent._id">
-        <h5>{{continent.name}}: </h5>
-        <p>{{continent.cardinalDirection}}</p>
-      </div>
+  <div class="data-container">
+    <div class="data-items" v-for="continent in continents" :key="continent._id">
+      <h5>{{continent.name}}: </h5>
+      <p>{{continent.cardinalDirection}}</p>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      continents: [],
-      errors: []
+      continents: []
     }
   },
-  created(){
-    axios.get('https://api.got.show/api/continents/')
-    .then(response => {
-      this.continents = response.data
-      console.log(response.data);
-    })
-    .catch(e => {
-      this.errors.push(e)
-    })
+  methods: {
+    fetchContinents() {
+      axios.get('https://api.got.show/api/continents/')
+        .then(response => {
+          this.continents = response.data;
+        })
+        .catch(error => {
+          Event.$emit('error', error.message);
+        })
+    }
+  },
+  mounted() {
+    this.fetchContinents();
   }
 }
 </script>

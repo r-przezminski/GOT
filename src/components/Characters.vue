@@ -1,10 +1,7 @@
 <template>
-  <div>
-    <search v-show="showFilter"></search>
-    <div class="data-container">
-      <div class="data-items" v-for="character in filteredCharacters" :key="character._id">
-        <router-link :to="{name: 'character', params: {id: character._id}}">{{character.name}}</router-link>
-      </div>
+  <div class="data-container">
+    <div class="data-items" v-for="character in filteredCharacters" :key="character._id">
+      <router-link :to="{name: 'character', params: {id: character._id}}">{{character.name}}</router-link>
     </div>
   </div>
 </template>
@@ -14,29 +11,32 @@ export default {
   data() {
     return {
       characters: [],
-      errors: [],
-      showFilter: false,
       search: ''
     }
   },
   created() {
-    axios.get('https://api.got.show/api/characters')
-      .then(response => {
-        this.characters = response.data
-        this.showFilter = true
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
-
     Event.$on('searching', (value) => { this.search = value })
+  },
+  methods: {
+    fetchCharacters() {
+      axios.get('https://api.got.show/api/characters')
+        .then(response => {
+          this.characters = response.data;
+        })
+        .catch(error => {
+          Event.$emit('error', error.message);
+        })
+    }
   },
   computed: {
     filteredCharacters() {
       return this.characters.filter((character) => {
-        return character.name.toLowerCase().match(this.search)
+        return character.name.toLowerCase().match(this.search);
       })
     }
+  },
+  mounted() {
+    this.fetchCharacters();
   }
 }
 </script>

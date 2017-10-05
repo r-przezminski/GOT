@@ -1,6 +1,6 @@
 <template>
   <div v-show="error" class="error">
-    <h4>Sorry, something went wrong! Couldn't load data!</h4>
+    <h2>{{message}}!</h2>
   </div>
 </template>
 
@@ -8,30 +8,35 @@
 export default {
   data() {
     return {
-      error: false
+      error: false,
+      message: '',
     }
   },
   created() {
+    Event.$on('error', (message) => {
+      this.error = true;
+      this.message = message;
+    })
+    Event.$on('hideError', () =>{
+      this.error = false;
+    })
   },
 }
 </script>
 
 <style scoped>
-
-.error{
-  position: fixed;
-  top: 30px;
-  width: 300px;
+.error {
+  min-width: 300px;
   min-height: 100px;
-  background: rgba(0, 0, 0, .7);
-  border: 2px solid indianred;
+  background: rgba(255, 0, 0, .5);
+  border: 2px solid red;
   border-radius: 10px;
   margin: 50px auto;
   padding: 30px;
-  z-index: 1;
 }
 
-.error h4 {
+.error h2 {
+  text-align: center;
   color: indianred;
 }
 </style>

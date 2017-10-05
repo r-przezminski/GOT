@@ -11,20 +11,10 @@ export default {
   data() {
     return {
       houses: [],
-      errors: [],
       search: ''
     }
   },
   created() {
-    axios.get('https://api.got.show/api/houses/')
-      .then(response => {
-        this.houses = response.data
-        console.log(response.data)
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
-
     Event.$on('searching', (value) => { this.search = value })
   },
   computed: {
@@ -33,6 +23,20 @@ export default {
         return house.name.toLowerCase().match(this.search)
       })
     }
+  },
+  methods: {
+    fetchHouses() {
+      axios.get('https://api.got.show/api/houses/')
+        .then(response => {
+          this.houses = response.data;
+        })
+        .catch(error => {
+          Event.$emit('error', error.message);
+        })
+    }
+  },
+  mounted() {
+    this.fetchHouses();
   }
 }
 </script>

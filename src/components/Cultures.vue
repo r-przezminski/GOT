@@ -10,24 +10,28 @@
 export default {
   data() {
     return {
-      cultures: [],
-      errors: []
+      cultures: []
     }
   },
-  created() {
-    axios.get('https://api.got.show/api/cultures/')
-      .then(response => {
-        this.cultures = response.data
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
+  methods: {
+    fetchCultures() {
+      axios.get('https://api.got.show/api/cultures/')
+        .then(response => {
+          this.cultures = response.data;
+        })
+        .catch(error => {
+          Event.$emit('error', error.message);
+        })
+    }
+  },
+  mounted() {
+    this.fetchCultures();
   }
 }
 </script>
 
 <style scoped>
-.data-items p{
+.data-items p {
   color: bisque;
   text-align: center;
 }

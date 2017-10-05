@@ -19,6 +19,8 @@
     </header>
     <div class="content">
       <loading></loading>
+      <error></error>
+      <search></search>
       <router-view></router-view>
     </div>
     <footer>
@@ -37,7 +39,8 @@ export default {
       fixedNavigation: false,
       fixedMenuButton: false,
       triggerNavigation: false,
-      isActiveNavOption: false
+      isActiveNavOption: false,
+      pathsWithFilter: ['characters', 'houses', 'cities',]
     }
   },
   computed: {
@@ -74,9 +77,36 @@ export default {
     hideNavigation() {
       this.triggerNavigation = false;
     },
+    beforeAxiosRequest() {
+      axios.interceptors.request.use((config) => {
+        Event.$emit('showLoading');
+        Event.$emit('hideError');
+        Event.$emit('hideFilter');
+        return config;
+      },
+        (error) => {
+          Event.$emit('error', error.message);
+          Event.$emit('hideLoading');
+          return Promise.reject(error);
+        });
+    },
+    beforeAxiosResponse() {
+      axios.interceptors.response.use((response) => {
+        Event.$emit('hideLoading');
+        Event.$emit('showFilter', this.pathsWithFilter);
+        return response;
+      },
+        (error) => {
+          Event.$emit('hideLoading');
+          Event.$emit('error', error.message);
+          return Promise.reject(error);
+        });
+    },  
   },
   created() {
     window.addEventListener('scroll', this.handleScroll);
+    this.beforeAxiosRequest();
+    this.beforeAxiosResponse();
   },
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll);
@@ -225,10 +255,11 @@ header nav ul li:hover ul li {
   height: 120px;
   margin: 10px 10px;
   padding: 20px;
-  border: 1px solid bisque;
+  border-bottom: 1px solid bisque;
+  border-right: 1px solid bisque;
   border-radius: 5px;
   background: rgba(0, 0, 0, 0.7);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, .7);
+  box-shadow: 1px 5px 10px rgba(0, 0, 0, .7);
   display: flex;
   justify-content: center;
   align-items: center;
