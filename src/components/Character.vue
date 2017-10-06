@@ -1,36 +1,43 @@
 <template>
-  <div class="character-container">
-    <div class="character-image">
-      <div v-if="character.imageLink">
-        <img :src="'https://api.got.show' + character.imageLink" :alt="'image of ' + character.name">
-      </div>
-      <div v-else>
-        <h4>This character doesn't have any image yet.</h4>
-      </div>
+  <div>
+    <div class="filter">
+      <button type="button">Previous</button>
+      <button v-on:click="getRandomCharacter()" type="button">Random character</button>
+      <button type="button">Next</button>
     </div>
-    <div class="character-info">
-      <div class="info">
-        <h2>{{character.name}}</h2>
+    <div class="character-container">
+      <div class="character-image">
+        <div v-if="character.imageLink">
+          <img :src="'https://api.got.show' + character.imageLink" :alt="'image of ' + character.name">
+        </div>
+        <div v-else>
+          <h4>This character doesn't have any image yet.</h4>
+        </div>
       </div>
-      <div v-if="character.titles && character.titles.length > 0" class="info">
-        <h4>Titles: </h4>
-        <p v-for="title in character.titles" :key="title.index">{{title}},</p>
-      </div>
-      <div v-if="character.house" class="info">
-        <h4>House: </h4>
-        <p>{{character.house}}</p>
-      </div>
-      <div v-if="character.dateOfBirth" class="info">
-        <h4>Date of birth: </h4>
-        <p>{{character.dateOfBirth}}</p>
-      </div>
-      <div v-if="character.dateOfDeath" class="info">
-        <h4>Date of death: </h4>
-        <p>{{character.dateOfDeath}}</p>
-      </div>
-      <div v-if="character.books && character.books.length > 0" class="info">
-        <h4>Books: </h4>
-        <p v-for="book in character.books" :key="book.index">{{book}},</p>
+      <div class="character-info">
+        <div class="info">
+          <h2>{{character.name}}</h2>
+        </div>
+        <div v-if="character.titles && character.titles.length > 0" class="info">
+          <h4>Titles: </h4>
+          <p v-for="title in character.titles" :key="title.index">{{title}},</p>
+        </div>
+        <div v-if="character.house" class="info">
+          <h4>House: </h4>
+          <p>{{character.house}}</p>
+        </div>
+        <div v-if="character.dateOfBirth" class="info">
+          <h4>Date of birth: </h4>
+          <p>{{character.dateOfBirth}}</p>
+        </div>
+        <div v-if="character.dateOfDeath" class="info">
+          <h4>Date of death: </h4>
+          <p>{{character.dateOfDeath}}</p>
+        </div>
+        <div v-if="character.books && character.books.length > 0" class="info">
+          <h4>Books: </h4>
+          <p v-for="book in character.books" :key="book.index">{{book}},</p>
+        </div>
       </div>
     </div>
   </div>
@@ -41,18 +48,37 @@ export default {
   data() {
     return {
       character: [],
+      characters: []
     }
   },
+  created() {
+    this.fetchCharacters();
+  },
   methods: {
-    fetchCharacter() {
-      axios.get('https://api.got.show/api/characters/byId/' + this.$route.params.id)
+    fetchCharacter(id = null) {
+      let url = 'https://api.got.show/api/characters/byId/';
+      axios.get(url = id ? url + id : url + this.$route.params.id)
         .then(response => {
           this.character = response.data.data;
         })
         .catch(error => {
           Event.$emit('error', error.message);
         })
-    }
+    },
+    fetchCharacters() {
+      axios.get('https://api.got.show/api/characters/')
+        .then(response => {
+          this.characters = response.data;
+        })
+        .catch(error => {
+          Event.$emit('error', error.message);
+        })
+    },
+    getRandomCharacter() {
+      let random = Math.floor(Math.random() * this.characters.length);
+      this.$router.push({ name: 'character', params: { id: this.characters[random]._id } });
+      this.fetchCharacter(this.characters[random]._id);
+    },
   },
   mounted() {
     this.fetchCharacter();
@@ -61,6 +87,37 @@ export default {
 </script>
 
 <style scoped>
+.filter {
+  min-height: 100px;
+  width: 90%;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter button {
+  margin: 10px;
+  height: 50px;
+  width: 160px;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid bisque;
+  border-right: 1px solid bisque;
+  border-radius: 5px;
+  outline: none;
+  text-align: center;
+  color: white;
+  background: rgba(0, 0, 0, .7);
+  box-shadow: 1px 5px 10px rgba(0, 0, 0, .7);
+}
+
+.filter button:hover {
+  color: bisque;
+  cursor: pointer;
+}
+
 .character-container {
   display: flex;
   flex-wrap: wrap;

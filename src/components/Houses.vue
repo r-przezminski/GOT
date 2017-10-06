@@ -1,7 +1,10 @@
 <template>
-  <div class="data-container">
-    <div class="data-items" v-for="house in filteredHouses" :key="house._id">
-      <router-link :to="{name: 'house', params: {id: house._id}}">{{house.name}}</router-link>
+  <div>
+    <search></search>
+    <div class="data-container">
+      <div class="data-items" v-for="house in filteredHouses" :key="house._id">
+        <router-link :to="{name: 'house', params: {id: house._id}}">{{house.name}}</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -20,7 +23,7 @@ export default {
   computed: {
     filteredHouses() {
       return this.houses.filter((house) => {
-        return house.name.toLowerCase().match(this.search)
+        return house.name.toLowerCase().match(this.search.toLowerCase())
       })
     }
   },

@@ -1,7 +1,10 @@
 <template>
-  <div class="data-container">
-    <div class="data-items" v-for="city in filteredCities" :key="city._id">
-      <a target="_blank" :href="city.link">{{city.name}}</a>
+  <div>
+    <search></search>
+    <div class="data-container">
+      <div class="data-items" v-for="city in filteredCities" :key="city._id">
+        <a target="_blank" :href="city.link">{{city.name}}</a>
+      </div>
     </div>
   </div>
 </template>

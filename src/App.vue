@@ -6,7 +6,7 @@
       </div>
       <nav v-bind:class="fixNavigation" v-on:click="hideNavigation()">
         <ul v-bind:class="showNavigation">
-          <li v-for="menuItem in menuItems" :key="menuItem.index">
+          <li  v-for="menuItem in menuItems" :key="menuItem.index">
             <router-link :to="{name: menuItem}" v-text="menuItem"></router-link>
             <ul v-if="menuItem == 'locations'">
               <li v-for="subMenuItem in subMenuItems" :key="subMenuItem.index">
@@ -20,8 +20,7 @@
     <div class="content">
       <loading></loading>
       <error></error>
-      <search></search>
-      <router-view></router-view>
+      <router-view v-show="showContent"></router-view>
     </div>
     <footer>
       <h3>&copy; Game of thrones</h3>
@@ -40,7 +39,7 @@ export default {
       fixedMenuButton: false,
       triggerNavigation: false,
       isActiveNavOption: false,
-      pathsWithFilter: ['characters', 'houses', 'cities',]
+      showContent: false
     }
   },
   computed: {
@@ -81,32 +80,37 @@ export default {
       axios.interceptors.request.use((config) => {
         Event.$emit('showLoading');
         Event.$emit('hideError');
-        Event.$emit('hideFilter');
+        Event.$emit('hideContent');
+        Event.$emit('clearFilter');
         return config;
       },
         (error) => {
           Event.$emit('error', error.message);
           Event.$emit('hideLoading');
+          Event.$emit('hideContent');
           return Promise.reject(error);
         });
     },
     beforeAxiosResponse() {
       axios.interceptors.response.use((response) => {
         Event.$emit('hideLoading');
-        Event.$emit('showFilter', this.pathsWithFilter);
+        Event.$emit('showContent');
         return response;
       },
         (error) => {
           Event.$emit('hideLoading');
+          Event.$emit('hideContent');
           Event.$emit('error', error.message);
           return Promise.reject(error);
         });
-    },  
+    },
   },
   created() {
     window.addEventListener('scroll', this.handleScroll);
     this.beforeAxiosRequest();
     this.beforeAxiosResponse();
+    Event.$on('hideContent', () => this.showContent = false);
+    Event.$on('showContent', () => this.showContent = true);
   },
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll);
@@ -240,14 +244,18 @@ header nav ul li:hover ul li {
 
 .content {
   width: 90%;
-  margin: 50px auto;
+  margin: 20px auto;
   min-height: 300px;
 }
 
 .data-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
   justify-content: center;
+  /* box-shadow: 0px 0px 10px rgba(0, 0, 0, .7);
+  border-radius: 5px; */
+  padding: 20px 0;
+  /* background: gainsboro; */
 }
 
 .data-items {

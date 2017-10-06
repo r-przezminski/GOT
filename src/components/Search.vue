@@ -1,5 +1,5 @@
 <template>
-  <div v-show="showFilter" class="search">
+  <div class="search">
     <input v-on:keyup="searching()" type="text" v-model="search" placeholder="Search...">
   </div>
 </template>
@@ -8,7 +8,6 @@
 export default {
   data() {
     return {
-      showFilter: true,
       search: ''
     }
   },
@@ -16,20 +15,9 @@ export default {
     searching() {
       Event.$emit('searching', this.search)
     },
-    trigerFilter() {
-      Event.$on('showFilter', (value) => {
-        for (let index = 0; index < value.length; index++) {
-          if (this.$route.path.includes(value[index])) {
-            this.showFilter = true;
-            break;
-          }
-        }
-      });
-      Event.$on('hideFilter', () => { this.showFilter = false });
-    }
   },
   created() {
-    this.trigerFilter();
+    Event.$on('clearFilter', () => { this.search = '' })
   }
 }
 </script>
@@ -38,7 +26,6 @@ export default {
 .search {
   display: flex;
   justify-content: center;
-  margin-bottom: 40px;
 }
 
 .search input {
@@ -47,7 +34,7 @@ export default {
   /* border-right: 1px solid bisque; */
   outline: none;
   height: 50px;
-  width: 100px;
+  width: 160px;
   color: white;
   font-size: 20px;
   background: rgba(0, 0, 0, .7);
@@ -58,6 +45,6 @@ export default {
 }
 
 .search input:focus {
-  width: 400px;
+  width: 90%;
 }
 </style>
