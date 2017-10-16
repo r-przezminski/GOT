@@ -55,31 +55,30 @@ export default {
     this.fetchCharacters();
   },
   methods: {
-    fetchCharacter(id = null) {
-      let url = 'https://api.got.show/api/characters/byId/';
-      axios.get(url = id ? url + id : url + this.$route.params.id)
+    fetchCharacter(characterId = null) {
+      let id = characterId ? characterId : this.$route.params.id;
+      this.$http.get('characters/byId/' + id)
         .then(response => {
-          this.character = response.data.data;
-        })
-        .catch(error => {
-          Event.$emit('error', error.message);
-        })
+          this.character = response.body.data;
+        }, error => {
+          Event.$emit('error', error.status, error.statusText);
+        });
     },
     fetchCharacters() {
-      axios.get('https://api.got.show/api/characters/')
+      this.$http.get('characters')
         .then(response => {
-          this.characters = response.data;
-        })
-        .catch(error => {
-          Event.$emit('error', error.message);
-        })
+          this.characters = response.body;
+        }, error => {
+          Event.$emit('error', error.status, error.statusText);
+        });
     },
     getRandomCharacter() {
       let random = Math.floor(Math.random() * this.characters.length);
-      this.$router.push({ name: 'character', params: { id: this.characters[random]._id } });
+      this.$router.push({ name: 'Character', params: { id: this.characters[random]._id } });
       this.fetchCharacter(this.characters[random]._id);
     },
   },
+
   mounted() {
     this.fetchCharacter();
   }

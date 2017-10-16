@@ -1,6 +1,6 @@
 <template>
-  <div v-show="error" class="error">
-    <h2>{{message}}!</h2>
+  <div class="error">
+    <h2>{{status}}! {{message}}!</h2>
   </div>
 </template>
 
@@ -8,18 +8,15 @@
 export default {
   data() {
     return {
-      error: false,
       message: '',
+      status: '',
     }
   },
   created() {
-    Event.$on('error', (message) => {
-      this.error = true;
-      this.message = message;
-    })
-    Event.$on('hideError', () =>{
-      this.error = false;
-    })
+    Event.$on('error', (status, message) => {
+      this.status = status; 
+      this.message = message; 
+    });
   },
 }
 </script>

@@ -12,60 +12,37 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: load('Home')
     },
     {
       path: '/characters',
-      name: 'characters',
+      name: 'Characters',
       component: load('Characters')
-      // children: [
-      //   { path: ':slug', name: 'character', component: Character }
-      // ]
     },
     {
       path: '/character/:id',
-      name: 'character',
+      name: 'Character',
       component: load('Character')
     },
     {
-      path: '/locations',
-      name: 'locations',
-      component: load('Locations')
-    },
-    {
-      path: '/locations/continents',
-      name: 'continents',
-      component: load('Continents'),
-    },
-    {
-      path: '/locations/cities',
-      name: 'cities',
+      path: '/cities',
+      name: 'Cities',
       component: load('Cities')
     },
     {
-      path: '/cultures',
-      name: 'cultures',
-      component: load('Cultures')
-    },
-    {
       path: '/houses',
-      name: 'houses',
+      name: 'Houses',
       component: load('Houses')
     },
     {
       path: '/house/:id',
-      name: 'house',
+      name: 'House',
       component: load('House')
     },
     {
-      path: '/locations/regions',
-      name: 'regions',
-      component: load('Regions')
-    },
-    {
       path: '/episodes',
-      name: 'episodes',
+      name: 'Episodes',
       component: load('Episodes')
     }
   ]

@@ -1,9 +1,8 @@
 <template>
   <div>
-    <search></search>
     <div class="data-container">
       <div class="data-items" v-for="house in filteredHouses" :key="house._id">
-        <router-link :to="{name: 'house', params: {id: house._id}}">{{house.name}}</router-link>
+        <router-link :to="{name: 'House', params: {id: house._id}}">{{house.name}}</router-link>
       </div>
     </div>
   </div>
@@ -29,14 +28,14 @@ export default {
   },
   methods: {
     fetchHouses() {
-      axios.get('https://api.got.show/api/houses/')
+      this.$http.get('houses')
         .then(response => {
-          this.houses = response.data;
-        })
-        .catch(error => {
-          Event.$emit('error', error.message);
-        })
-    }
+          this.houses = response.body;
+          Event.$emit('resultsAll', this.houses.length, 'houses');
+        }, error => {
+          Event.$emit('error', error.status, error.statusText);
+        });
+    },
   },
   mounted() {
     this.fetchHouses();

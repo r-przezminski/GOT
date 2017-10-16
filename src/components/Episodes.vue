@@ -25,15 +25,14 @@ export default {
   },
   methods: {
     fetchEpisodes() {
-      axios.get('https://api.got.show/api/episodes/')
+      this.$http.get('episodes')
         .then(response => {
-          this.episodes = response.data;
-          this.fetchSeasons(response.data);
-          console.log(response.data);
-        })
-        .catch(error => {
-          Event.$emit('error', error.message);
-        })
+          this.episodes = response.body;
+          Event.$emit('resultsAll', this.episodes.length, 'episodes');
+          this.fetchSeasons(response.body);
+        }, error => {
+          Event.$emit('error', error.status, error.statusText);
+        });
     },
     fetchSeasons(data) {
       for (let index = 0; index < data.length; index++) {

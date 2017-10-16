@@ -61,13 +61,12 @@ export default {
   },
   methods: {
     fetchHouse() {
-      axios.get('https://api.got.show/api/houses/byId/' + this.$route.params.id)
+      this.$http.get('houses/byId/' + this.$route.params.id)
         .then(response => {
-          this.house = response.data.data;
-        })
-        .catch(error => {
-          Event.$emit('error', error.message);
-        })
+          this.house = response.body;
+        }, error => {
+          Event.$emit('error', error.status, error.statusText);
+        });
     }
   },
   mounted() {

@@ -1,89 +1,207 @@
 <template>
-  <div>
-    <search></search>
-    <div class="filter">
-      <button v-on:click="setGender('all')" type="button">All characters</button>
-      <button v-on:click="setGender(true)" type="button">Men</button>
-      <button v-on:click="setGender(false)" type="button">Women</button>
-      <button v-on:click="getRandomCharacter()" type="button">Random character</button>
-    </div>
-    <div class="data-container">
-      <div class="data-items" v-for="character in filteredCharacters" :key="character._id">
-        <router-link :to="{name: 'character', params: {id: character._id}}">{{character.name}}</router-link>
+  <div class="wrapper">
+    <!-- <div class="filters">
+      <div class="filters-top">
+
+        <div>
+          <label for="has-photo">
+            <strong>Filter by image</strong>
+          </label>
+          <input v-model="filterBy.photo" type="checkbox" name="hasPhoto" id="has-photo">
+        </div>
+        <div>
+          <button v-on:click="getRandomCharacter()" type="button">Random character</button>
+        </div>
       </div>
-    </div>
+      <div class="filters-bottom">
+        <div>
+          <label for="gender">
+            <strong>Filter by gender</strong>
+          </label>
+          <v-select v-model="filterBy.gender.value" :options="filterBy.gender.options"></v-select>
+        </div>
+        <div>
+          <label for="houses">
+            <strong>Filter by house</strong>
+          </label>
+          <v-select v-model="filterBy.houses" multiple :options="houses" id="houses"></v-select>
+        </div>
+      </div>
+    </div> -->
+    <!-- <div class="characters-container">
+      <div class="characters" v-for="character in filteredCharacters" :key="character._id">
+        <img v-if="character.imageLink" :src="'https://api.got.show' + character.imageLink" alt="">
+        <img v-else src="../assets/img/NoImage.png" alt="">
+        <router-link :to="{name: 'Character', params: {id: character._id}}">{{character.name}}</router-link>
+      </div>
+    </div> -->
   </div>
 </template>
 
 <script>
+import vSelect from 'vue-select'
+
 export default {
+  components: {
+    'v-select': vSelect
+  },
   data() {
     return {
       characters: [],
-      search: '',
-      gender: 'all'
+      filterBy: {
+        search: '',
+        gender: {
+          options: ['All characters', 'Female', 'Male'],
+          value: 'All characters'
+        },
+        photo: false,
+        houses: []
+      },
+      houses: []
     }
   },
   created() {
-    Event.$on('searching', (value) => { this.search = value });
+    Event.$on('searching', (value) => { this.filterBy.search = value });
+    this.fetchCharacters();
   },
   methods: {
+    // fetchCharacters() {
+    //   fetch('https://api.got.show/api/characters')
+    //     .then((response) => {
+    //       return response.json()
+    //     })
+    //     .then((characters) => {
+    //       this.characters = characters;
+    //       Event.$emit('resultsAll', this.characters.length, 'characters');
+    //     })
+    //     .catch((error) => {
+    //       Event.$emit('error', error.message);
+    //     })
+    // },
+    // fetchHouses() {
+    //   fetch('https://api.got.show/api/houses')
+    //     .then((response) => {
+    //       return response.json()
+    //     })
+    //     .then((houses) => {
+    //       for (let index = 0; index < houses.length; index++) {
+    //         this.houses.push(houses[index].name);
+    //       }
+    //     })
+    //     .catch((error) => {
+    //       Event.$emit('error', error.message);
+    //     })
+    // },
+
     fetchCharacters() {
-      axios.get('https://api.got.show/api/characters')
+      this.$http.get('characters')
         .then(response => {
-          this.characters = response.data;
-        })
-        .catch(error => {
-          Event.$emit('error', error.message);
-        })
+          this.characters = response.body;
+          Event.$emit('resultsAll', this.characters.length, 'characters');
+          this.fetchHouses();
+        }, error => {
+          Event.$emit('error', error.status, error.statusText);
+        });
     },
-    setGender(gender) {
-      this.gender = gender;
+    fetchHouses() {
+      this.$http.get('houses')
+        .then(response => {
+          for (let index = 0; index < response.data.length; index++) {
+            this.houses.push(response.data[index].name);
+          }
+        }, error => {
+          Event.$emit('error', error.status, error.statusText);
+        });
     },
     getRandomCharacter() {
       let random = Math.floor(Math.random() * this.characters.length);
-      this.$router.push({ name: 'character', params: { id: this.characters[random]._id } });
+      this.$router.push({ name: 'Character', params: { id: this.characters[random]._id } });
     },
   },
   computed: {
     filteredCharacters() {
       return this.characters.filter((character) => {
-        return character.name.toLowerCase().match(this.search.toLowerCase());
+        return character.name.toLowerCase().match(this.filterBy.search.toLowerCase());
       })
-      .filter((character) => {
-        switch (this.gender) {
-          case true: return character.male == true;
-            break;
-          case false: return character.male == false;
-            break;
-          default: return character.male == character.male;
-            break;
-        }
-      })
+        .filter((character) => {
+          switch (this.filterBy.gender.value) {
+            case "Male": return character.male == true;
+              break;
+            case "Female": return character.male == false;
+              break;
+            default: return character;
+              break;
+          }
+        })
+        .filter((character) => {
+          switch (this.filterBy.photo) {
+            case true: return character.imageLink != null;
+              break;
+            default: return character;
+              break;
+          }
+        })
+        .filter((character) => {
+          if (this.filterBy.houses.length > 0) {
+            return character.house != null && this.filterBy.houses.includes(character.house);
+          }
+          else {
+            return character;
+          }
+        })
     }
   },
-  mounted() {
-    this.fetchCharacters();
-  }
+  watch: {
+    filteredCharacters: (value) => {
+      Event.$emit('resultsMatched', value.length);
+    }
+  },
 }
 </script>
 
 <style scoped>
-.filter {
-  min-height: 100px;
+/* .filters {
+  min-height: 150px;
   width: 90%;
   margin: auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
 }
 
-.filter button {
-  margin: 10px;
+.filters div {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.filters-top {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+}
+
+.filters-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: center;
+  height: 100px;
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+.filters-bottom div {
+  width: 400px;
+}
+
+.filters label {
+  padding: 10px;
+}
+
+.filters button {
   height: 50px;
   width: 160px;
-  padding: 10px;
   border: none;
   border-bottom: 1px solid bisque;
   border-right: 1px solid bisque;
@@ -95,8 +213,82 @@ export default {
   box-shadow: 1px 5px 10px rgba(0, 0, 0, .7);
 }
 
-.filter button:hover {
+.filters button:hover {
   color: bisque;
   cursor: pointer;
+}
+
+.filters input[type="checkbox"] {
+  font-size: 30px;
+  appearance: none;
+  width: 2em;
+  height: 1em;
+  background: #DDE2EB;
+  border-radius: 3em;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  transition: all .2s ease-in-out;
+}
+
+.filters input[type="checkbox"]:checked {
+  background: bisque;
+}
+
+.filters input[type="checkbox"]:after {
+  position: absolute;
+  content: "";
+  width: 1em;
+  height: 1em;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 .25em rgba(0, 0, 0, .3);
+  transform: scale(.7);
+  left: 0;
+  transition: all .2s ease-in-out;
+}
+
+.filters input[type="checkbox"]:checked:after {
+  left: calc(100% - 1em);
+} */
+
+.characters-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+}
+
+.characters {
+  width: 200px;
+  height: 250px;
+  margin: 10px 10px;
+  border-bottom: 1px solid bisque;
+  border-right: 1px solid bisque;
+  border-radius: 5px;
+  background: #DDE2EB;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, .7);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+}
+
+.characters img {
+  width: 200px;
+  height: 180px;
+  border-bottom: 1px solid bisque;
+}
+
+.characters a {
+  text-decoration: none;
+  color: black;
+  text-align: center;
+  position: absolute;
+  top: 205px;
+  transition: .2s ease-in-out;
+}
+
+.characters a:hover {
+  color: coral;
 }
 </style>

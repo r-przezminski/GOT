@@ -1,6 +1,5 @@
 <template>
   <div>
-    <search></search>
     <div class="data-container">
       <div class="data-items" v-for="city in filteredCities" :key="city._id">
         <a target="_blank" :href="city.link">{{city.name}}</a>
@@ -18,30 +17,49 @@ export default {
     }
   },
   methods: {
-    fetchCities() {
-      axios.get('https://api.got.show/api/cities/')
-        .then(response => {
-          this.cities = response.data;
+      fetchCities() {
+        this.$http.get('cities')
+          .then(response => {
+            this.cities = response.body;
+            Event.$emit('resultsAll', this.cities.length, 'cities');
+          }, error => {
+            Event.$emit('error', error.status, error.statusText);
+          });
+      },
+
+    // fetchCities() {
+    //   fetch('https://api.got.show/api/cities')
+    //     .then((response) => {
+    //       return response.json()
+    //     })
+    //     .then((cities) => {
+    //       this.cities = cities;
+    //       Event.$emit('resultsAll', this.cities.length, 'cities');
+    //     })
+    //     .catch((error) => {
+    //       Event.$emit('error', error.message);
+    //     })
+    // }
+  },
+    computed: {
+      filteredCities() {
+        return this.cities.filter((city) => {
+          return city.name.toLowerCase().match(this.search.toLowerCase());
         })
-        .catch(error => {
-          Event.$emit('error', error.message);
-        })
+      }
+    },
+    watch: {
+    filteredCities: (value) => {
+      Event.$emit('resultsMatched', value.length);
     }
   },
-  computed: {
-    filteredCities() {
-      return this.cities.filter((city) => {
-        return city.name.toLowerCase().match(this.search.toLowerCase());
-      })
+    created() {
+      Event.$on('searching', (value) => { this.search = value })
+    },
+    mounted() {
+      this.fetchCities();
     }
-  },
-  created() {
-    Event.$on('searching', (value) => { this.search = value })
-  },
-  mounted() {
-    this.fetchCities();
   }
-}
 </script>
 
 <style scoped>
