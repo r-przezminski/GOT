@@ -144,7 +144,7 @@ export default {
   display: none !important;
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 768px) {
   .house-container {
     flex-direction: column;
   }

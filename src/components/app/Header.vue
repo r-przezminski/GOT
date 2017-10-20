@@ -17,4 +17,8 @@ header {
     height: 100vh;
     position: relative;
 }
+
+@media only screen and (max-width: 768px) {
+
+}
 </style>

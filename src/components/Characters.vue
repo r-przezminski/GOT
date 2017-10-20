@@ -1,49 +1,76 @@
 <template>
   <div class="wrapper">
-    <!-- <div class="filters">
-      <div class="filters-top">
-
-        <div>
-          <label for="has-photo">
-            <strong>Filter by image</strong>
-          </label>
-          <input v-model="filterBy.photo" type="checkbox" name="hasPhoto" id="has-photo">
-        </div>
-        <div>
-          <button v-on:click="getRandomCharacter()" type="button">Random character</button>
-        </div>
+    <header-component></header-component>
+    <app-modal v-if="modal.show" @close-modal="modal.show = false">
+      <h2 slot="header">{{modal.data.name}}</h2>
+      <img  slot="img" v-if="modal.data.imageLink" :src="'https://api.got.show' + modal.data.imageLink" :alt="'image of ' + modal.data.name">
+      <img slot="img" v-else src="../assets/img/NoImage.png" alt="No image">
+      <div slot="info">
+        <ul v-if="modal.data.titles && modal.data.titles.length > 0">Titles:
+          <li v-for="title in modal.data.titles" :key="title.index">{{title}},</li>
+        </ul>
+        <ul v-if="modal.data.house">House:
+          <li>{{modal.data.house}}</li>
+        </ul>
+        <ul v-if="modal.data.culture">Culture:
+          <li>{{modal.data.culture}}</li>
+        </ul>
+        <ul v-if="modal.data.region">Region:
+          <li>{{modal.data.region}}</li>
+        </ul>
+        <ul v-if="modal.data.spouse">Spouse:
+          <li>{{modal.data.spouse}}</li>
+        </ul>
+        <ul v-if="modal.data.dateOfBirth">Date of birth:
+          <li>{{modal.data.dateOfBirth}}</li>
+        </ul>
+        <ul v-if="modal.data.dateOfDeath">Date of death:
+          <li>{{modal.data.dateOfDeath}}</li>
+        </ul>
+        <ul v-if="modal.data.books && modal.data.books.length > 0">Books:
+          <li v-for="book in modal.data.books" :key="book.index">{{book}},</li>
+        </ul>
       </div>
-      <div class="filters-bottom">
-        <div>
-          <label for="gender">
-            <strong>Filter by gender</strong>
-          </label>
-          <v-select v-model="filterBy.gender.value" :options="filterBy.gender.options"></v-select>
-        </div>
-        <div>
-          <label for="houses">
-            <strong>Filter by house</strong>
-          </label>
-          <v-select v-model="filterBy.houses" multiple :options="houses" id="houses"></v-select>
-        </div>
-      </div>
-    </div> -->
-    <!-- <div class="characters-container">
-      <div class="characters" v-for="character in filteredCharacters" :key="character._id">
+    </app-modal>
+    <div id="image-filter">
+      <label for="has-photo">
+        <p>Images:</p>
+      </label>
+      <input v-model="filterBy.photo" type="checkbox" name="hasPhoto" id="has-photo">
+    </div>
+    <div id="gender-filter">
+      <label for="gender">
+        <p>Filter by gender:</p>
+      </label>
+      <v-select v-model="filterBy.gender.value" :options="filterBy.gender.options" id="gender"></v-select>
+    </div>
+    <div id="house-filter">
+      <label for="houses">
+        <p>Filter by house:</p>
+      </label>
+      <v-select v-model="filterBy.houses" multiple :options="houses" id="houses"></v-select>
+    </div>
+    <div id="characters-container">
+      <div id="character" v-for="(character, index) in filteredCharacters" :key="character._id">
+        <h3>{{character.name}}</h3>
         <img v-if="character.imageLink" :src="'https://api.got.show' + character.imageLink" alt="">
-        <img v-else src="../assets/img/NoImage.png" alt="">
-        <router-link :to="{name: 'Character', params: {id: character._id}}">{{character.name}}</router-link>
+        <img v-else src="../assets/img/NoImage.png" alt="no image">
+        <button v-on:click="getCharacterInfo(character)" type="button">More info</button>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
 <script>
+import Header from '@/components/Header'
+import Modal from '@/components/app/Modal'
 import vSelect from 'vue-select'
 
 export default {
   components: {
-    'v-select': vSelect
+    'v-select': vSelect,
+    'header-component': Header,
+    'app-modal': Modal
   },
   data() {
     return {
@@ -51,13 +78,17 @@ export default {
       filterBy: {
         search: '',
         gender: {
-          options: ['All characters', 'Female', 'Male'],
-          value: 'All characters'
+          options: ['All', 'Female', 'Male'],
+          value: 'All'
         },
         photo: false,
         houses: []
       },
-      houses: []
+      houses: [],
+      modal: {
+        show: false,
+        data: {}
+      }
     }
   },
   created() {
@@ -65,42 +96,19 @@ export default {
     this.fetchCharacters();
   },
   methods: {
-    // fetchCharacters() {
-    //   fetch('https://api.got.show/api/characters')
-    //     .then((response) => {
-    //       return response.json()
-    //     })
-    //     .then((characters) => {
-    //       this.characters = characters;
-    //       Event.$emit('resultsAll', this.characters.length, 'characters');
-    //     })
-    //     .catch((error) => {
-    //       Event.$emit('error', error.message);
-    //     })
-    // },
-    // fetchHouses() {
-    //   fetch('https://api.got.show/api/houses')
-    //     .then((response) => {
-    //       return response.json()
-    //     })
-    //     .then((houses) => {
-    //       for (let index = 0; index < houses.length; index++) {
-    //         this.houses.push(houses[index].name);
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       Event.$emit('error', error.message);
-    //     })
-    // },
-
     fetchCharacters() {
       this.$http.get('characters')
         .then(response => {
           this.characters = response.body;
-          Event.$emit('resultsAll', this.characters.length, 'characters');
+          Event.$emit('resultsAll', this.characters.length, 'Characters');
           this.fetchHouses();
         }, error => {
-          Event.$emit('error', error.status, error.statusText);
+          if (error.status && error.statusText) {
+            Event.$emit('error', error.status, error.statusText);
+          }
+          else {
+            Event.$emit('error', 'Uppsss', 'An error ocured');
+          }
         });
     },
     fetchHouses() {
@@ -112,6 +120,11 @@ export default {
         }, error => {
           Event.$emit('error', error.status, error.statusText);
         });
+    },
+    getCharacterInfo(character) {
+      Event.$emit('show-header');
+      this.modal.data = character;
+      this.modal.show = true;
     },
     getRandomCharacter() {
       let random = Math.floor(Math.random() * this.characters.length);
@@ -159,71 +172,29 @@ export default {
 }
 </script>
 
-<style scoped>
-/* .filters {
-  min-height: 150px;
-  width: 90%;
-  margin: auto;
+<style>
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: minmax(50px, auto);
+  grid-column-gap: 5px;
 }
 
-.filters div {
+#image-filter {
+  grid-column: 10/12;
+  grid-row: 1/2;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-.filters-top {
-  display: flex;
-  flex-wrap: wrap;
   justify-content: space-around;
-  align-items: center;
-  height: 100px;
-  width: 100%;
+  margin-top: 25px;
+  font-style: italic;
 }
 
-.filters-bottom {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: center;
-  height: 100px;
-  width: 100%;
-  margin-bottom: 50px;
-}
-
-.filters-bottom div {
-  width: 400px;
-}
-
-.filters label {
-  padding: 10px;
-}
-
-.filters button {
-  height: 50px;
-  width: 160px;
-  border: none;
-  border-bottom: 1px solid bisque;
-  border-right: 1px solid bisque;
-  border-radius: 5px;
-  outline: none;
-  text-align: center;
-  color: white;
-  background: rgba(0, 0, 0, .7);
-  box-shadow: 1px 5px 10px rgba(0, 0, 0, .7);
-}
-
-.filters button:hover {
-  color: bisque;
-  cursor: pointer;
-}
-
-.filters input[type="checkbox"] {
-  font-size: 30px;
+#image-filter input[type="checkbox"] {
+  font-size: 20px;
   appearance: none;
   width: 2em;
   height: 1em;
-  background: #DDE2EB;
+  background: grey;
   border-radius: 3em;
   position: relative;
   cursor: pointer;
@@ -231,11 +202,11 @@ export default {
   transition: all .2s ease-in-out;
 }
 
-.filters input[type="checkbox"]:checked {
-  background: bisque;
+#image-filter input[type="checkbox"]:checked {
+  background: chocolate;
 }
 
-.filters input[type="checkbox"]:after {
+#image-filter input[type="checkbox"]:after {
   position: absolute;
   content: "";
   width: 1em;
@@ -248,47 +219,102 @@ export default {
   transition: all .2s ease-in-out;
 }
 
-.filters input[type="checkbox"]:checked:after {
+#image-filter input[type="checkbox"]:checked:after {
   left: calc(100% - 1em);
-} */
-
-.characters-container {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
 }
 
-.characters {
-  width: 200px;
-  height: 250px;
-  margin: 10px 10px;
+#gender-filter {
+  grid-column: 2/6;
+  grid-row: 2/3;
+  align-self: center;
+  text-align: center;
+  font-style: italic;
+}
+
+#house-filter {
+  grid-column: 6/12;
+  grid-row: 2/3;
+  align-self: center;
+  text-align: center;
+  font-style: italic;
+}
+
+#gender,
+#houses {
+  margin-top: 10px;
+}
+
+#characters-container {
+  grid-column: 1/13;
+  grid-row: 4/5;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 10px;
+}
+
+#character {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+  width: 300px;
+  height: 420px;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, .8);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  text-align: center;
   border-bottom: 1px solid bisque;
   border-right: 1px solid bisque;
+  border-radius: 10px;
+}
+
+#character h3 {
+  color: bisque;
+  font-style: italic;
+  height: 50px;
+}
+
+#character img {
+  width: 250px;
+  height: 280px;
+}
+
+#character button {
+  height: 40px;
+  min-width: 150px;
+  margin: 15px 0;
+  background-color: chocolate;
+  color: white;
+  padding: 10px;
   border-radius: 5px;
-  background: #DDE2EB;
-  box-shadow: 2px 5px 10px rgba(0, 0, 0, .7);
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  position: relative;
+  outline: none;
+  border: none;
 }
 
-.characters img {
-  width: 200px;
-  height: 180px;
-  border-bottom: 1px solid bisque;
+#character button:hover {
+  cursor: pointer;
+  color: bisque;
 }
 
-.characters a {
-  text-decoration: none;
-  color: black;
-  text-align: center;
-  position: absolute;
-  top: 205px;
-  transition: .2s ease-in-out;
-}
+@media only screen and (max-width: 768px) {
+  #gender-filter {
+    grid-column: 2/12;
+    grid-row: 2/3;
+  }
 
-.characters a:hover {
-  color: coral;
+  #house-filter {
+    grid-column: 2/12;
+    grid-row: 3/4;
+    margin-top: 20px;
+  }
+  #characters-container {
+    grid-row: 5/6;
+  }
+
+  #image-filter {
+    grid-column: 8/12;
+  }
 }
 </style>

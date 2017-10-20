@@ -1,15 +1,22 @@
 <template>
-  <div>
-    <div class="data-container">
-      <div class="data-items" v-for="city in filteredCities" :key="city._id">
-        <a target="_blank" :href="city.link">{{city.name}}</a>
+  <div class="wrapper">
+    <header-component></header-component>
+    <div id="cities-container">
+      <div id="city" v-for="city in filteredCities" :key="city._id">
+        <h3>{{city.name}}</h3>
+        <a target="_blank" :href="city.link">See on westeros.org</a>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Header  from '@/components/Header'
+
 export default {
+  components: {
+    'header-component': Header
+  },
   data() {
     return {
       cities: [],
@@ -21,7 +28,7 @@ export default {
         this.$http.get('cities')
           .then(response => {
             this.cities = response.body;
-            Event.$emit('resultsAll', this.cities.length, 'cities');
+            Event.$emit('resultsAll', this.cities.length, 'Cities');
           }, error => {
             Event.$emit('error', error.status, error.statusText);
           });
@@ -54,14 +61,60 @@ export default {
     }
   },
     created() {
-      Event.$on('searching', (value) => { this.search = value })
-    },
-    mounted() {
       this.fetchCities();
+      Event.$on('searching', (value) => { this.search = value });
     }
   }
 </script>
 
 <style scoped>
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-auto-rows: minmax(50px, auto);
+  grid-column-gap: 5px;
+}
 
+#cities-container {
+  grid-column: 1/13;
+  grid-row: 2/3;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding: 10px;
+}
+
+#city {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 300px;
+  height: auto;
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, .8);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  text-align: center;
+  border-bottom: 1px solid bisque;
+  border-right: 1px solid bisque;
+  border-radius: 10px;
+}
+
+#city h3 {
+  color: bisque;
+  font-style: italic;
+  height: 50px;
+}
+
+#city a {
+  height: 40px;
+  background-color: chocolate;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  display: block;
+  text-decoration: none;
+  color: white;
+  font-size: 14px;
+}
 </style>

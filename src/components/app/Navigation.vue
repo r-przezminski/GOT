@@ -1,23 +1,17 @@
 <template>
-  <nav v-bind:class="fixNavigation">
+  <nav role="navigation" v-bind:class="fixNavigation">
     <div v-bind:class="slideNav" class="wrapper">
-      <div class="left-side">
-        <div class="home">
-          <router-link :to="{name: 'Home'}">
-            <i class="fa fa-home fa-2x" aria-hidden="true"></i>
-          </router-link>
-        </div>
-        <div class="search-bar">
-          <app-search></app-search>
-        </div>
+      <div>
+        <router-link :to="{name: 'Home'}">
+          <i class="fa fa-home fa-2x" aria-hidden="true"></i>
+        </router-link>
+        <app-search class="search-bar"></app-search>
       </div>
-      <div class="right-side">
-        <ul v-on:click="hideNav()">
-          <li v-for="menuItem in menuItems" :key="menuItem.index">
-            <router-link :to="{name: menuItem}">{{menuItem}}</router-link>
-          </li>
-        </ul>
-      </div>
+      <ul v-on:click="hideNav()">
+        <li v-for="menuItem in menuItems" :key="menuItem.index">
+          <router-link :to="{name: menuItem}">{{menuItem}}</router-link>
+        </li>
+      </ul>
     </div>
     <i id="burger" v-on:click="toggleNav()" class="fa fa-bars fa-2x" aria-hidden="true"></i>
   </nav>
@@ -34,18 +28,18 @@ export default {
     return {
       menuItems: ['Characters', 'Houses', 'Cities', 'Episodes'],
       fixed: false,
-      showNav: false
+      showNav: false,
     }
   },
   computed: {
     fixNavigation() {
       return {
-        'fixed': this.fixed && window.innerWidth > 700
+        'fixed': this.fixed && window.innerWidth > 768
       }
     },
     slideNav() {
       return {
-        'toggle-nav': this.showNav && window.innerWidth < 700
+        'toggle-nav': this.showNav && window.innerWidth < 768
       }
     }
   },
@@ -65,7 +59,7 @@ export default {
   },
   destroyed() {
     window.removeEventListener('scroll', this.handleScroll);
-  },
+  }
 }
 </script>
 
@@ -89,14 +83,16 @@ nav .wrapper {
   top: 0;
   z-index: 1;
   width: 100%;
+  animation-duration: .5s;
+  animation-name: nav-bounce;
 }
 
-nav .wrapper .left-side {
+nav .wrapper div {
   display: flex;
   width: 40%;
 }
 
-nav .wrapper .left-side .home i {
+nav .wrapper div a i {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -104,26 +100,23 @@ nav .wrapper .left-side .home i {
   transition: .2s ease-in-out;
 }
 
-nav .wrapper .left-side .home i:hover {
+nav .wrapper div a i:hover {
   color: bisque;
 }
 
-nav .wrapper .right-side {
+nav .wrapper ul {
   width: 50%;
-}
-
-nav .wrapper .right-side ul {
   display: flex;
   justify-content: flex-end;
   list-style: none;
 }
 
-nav .wrapper .right-side ul li {
+nav .wrapper ul li {
   width: 100%;
   text-align: center;
 }
 
-nav .wrapper .right-side ul li a {
+nav .wrapper ul li a {
   display: block;
   text-decoration: none;
   color: white;
@@ -132,7 +125,7 @@ nav .wrapper .right-side ul li a {
   transition: .2s ease-in-out;
 }
 
-nav .wrapper .right-side ul li a:hover {
+nav .wrapper ul li a:hover {
   background: bisque;
   color: black;
 }
@@ -140,11 +133,19 @@ nav .wrapper .right-side ul li a:hover {
 #burger {
   display: none;
 }
-.router-link-exact-active, .router-link-exact-active i {
+
+.router-link-exact-active,
+.router-link-exact-active i {
   color: chocolate !important;
 }
 
-@media only screen and (max-width: 700px) {
+@keyframes nav-bounce {
+  from { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  to { transform: scale(1); }
+}
+
+@media only screen and (max-width: 768px) {
   nav .wrapper {
     position: fixed;
     top: 0;
@@ -157,23 +158,23 @@ nav .wrapper .right-side ul li a:hover {
     overflow: scroll;
   }
 
-  nav .wrapper .left-side .home i {
+  nav .wrapper div a i {
     top: 230px;
     left: 110px;
   }
 
-  nav .wrapper .left-side .search-bar {
+  nav .wrapper div .search-bar {
     position: absolute;
     left: -70px;
   }
 
-  nav .wrapper .right-side {
+  nav .wrapper ul {
     position: absolute;
     width: 100%;
     top: 280px;
   }
 
-  nav .wrapper .right-side ul {
+  nav .wrapper ul {
     flex-direction: column;
   }
 
@@ -191,6 +192,7 @@ nav .wrapper .right-side ul li a:hover {
     border-radius: 5px;
     background: rgba(0, 0, 0, .8);
     box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+    z-index: 10;
   }
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
-  <div class="main">
+  <main>
     <app-loading v-show="loading"></app-loading>
     <app-error v-show="error"></app-error>
     <router-view v-show="main"></router-view>
-  </div>
+  </main>
 </template>
 
 <script>
@@ -47,12 +47,18 @@ export default {
 }
 
 body {
-  background: aliceblue;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  background: #d8d8d8;
 }
 
-.main {
-  width: 90%;
+main {
+  max-width: 960px;
   margin: 50px auto;
+}
+
+@media only screen and (max-width: 768px) {
+  main {
+    padding: 10px;
+  }
 }
 </style>

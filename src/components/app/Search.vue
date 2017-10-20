@@ -4,19 +4,6 @@
       <input v-model="search" v-on:keyup="searching()" type="text" placeholder="Search...">
       <i class="fa fa-search" aria-hidden="true"></i>
     </div>
-    <div v-bind:class="triggerResults" class="results">
-      <div class="title">
-        <h2>{{results.label | firstToUpper}}</h2>
-      </div>
-      <div class="all">
-        <p>All:</p>
-        <h3>{{results.all}}</h3>
-      </div>
-      <div class="matched">
-        <p>Matched:</p>
-        <h3>{{results.matched}}</h3>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -37,23 +24,9 @@ export default {
     searching() {
       Event.$emit('searching', this.search);
     },
-    hideResults() {
-
-    }
   },
   created() {
     Event.$on('clearFilter', () => { this.search = ''; })
-    Event.$on('resultsAll', (all, label) => {
-      this.results.all = all;
-      this.results.label = label;
-    });
-    Event.$on('resultsMatched', (matched) => {
-      this.results.matched = matched;
-      this.results.visible = true;
-      if (this.search === '') {
-        setTimeout(() => { this.results.visible = false }, 5000);
-      }
-    });
   },
   computed: {
     triggerResults() {
@@ -111,67 +84,9 @@ export default {
   color: bisque;
 }
 
-.show-result {
-  transform: translateX(350px);
-}
-
-.results {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  top: 70px;
-  left: -350px;
-  background: rgba(0, 0, 0, .8);
-  width: 350px;
-  height: 150px;
-  padding: 0 20px;
-  transition: .3s linear;
-}
-
-.results .title {
-  color: bisque;
-  font-weight: bold;
-  font-style: italic;
-  text-align: center;
-}
-
-.results .all {
-  display: flex;
-  position: absolute;
-  top: 40px;
-}
-
-.results .matched {
-  display: flex;
-  position: absolute;
-  top: 80px;
-}
-
-.results h3 {
-  margin-left: 20px;
-  color: bisque;
-}
-
-.results p {
-  color: white;
-}
-
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 768px) {
   .search input:focus {
     width: 200px;
-  }
-
-  .results {
-    top: 70px;
-    width: 250px;
-    left: 70px;
-    background: transparent;
-  }
-  .results .all {
-    left: 80px;
-  }
-  .results .matched {
-    left: 60px;
   }
 }
 </style>
