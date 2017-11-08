@@ -77,11 +77,11 @@ export default {
 
 .search input:focus {
   width: 240px;
-  border-bottom: 1px solid bisque;
+  border-bottom: 1px solid chocolate;
 }
 
 .search input:focus~i {
-  color: bisque;
+  color: chocolate;
 }
 
 @media only screen and (max-width: 768px) {

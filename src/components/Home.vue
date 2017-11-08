@@ -7,7 +7,7 @@
     </article>
     <div id="snow"></div>
     <article id="snow-article">
-      <h3 class="title">Jon Snow</h3>
+      <h3 class="title">Jony Jony :)</h3>
       <p class="content">Lorem ipsum dolor sit amet consectetur adipisicing elit. Perferendis beatae voluptatum autem facere libero odio!</p>
     </article>
     <div id="houses"></div>

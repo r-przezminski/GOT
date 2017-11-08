@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
-    <header-component></header-component>
-    <app-modal v-if="modal.show" @close-modal="modal.show = false">
+    <title-component></title-component>
+    <app-modal v-if="modal.show">
       <h2 slot="header">{{modal.data.name}}</h2>
       <img  slot="img" v-if="modal.data.imageLink" :src="'https://api.got.show' + modal.data.imageLink" :alt="'image of ' + modal.data.name">
       <img slot="img" v-else src="../assets/img/NoImage.png" alt="No image">
@@ -51,7 +51,7 @@
       <v-select v-model="filterBy.houses" multiple :options="houses" id="houses"></v-select>
     </div>
     <div id="characters-container">
-      <div id="character" v-for="(character, index) in filteredCharacters" :key="character._id">
+      <div class="character" v-for="(character, index) in filteredCharacters" :key="character._id">
         <h3>{{character.name}}</h3>
         <img v-if="character.imageLink" :src="'https://api.got.show' + character.imageLink" alt="">
         <img v-else src="../assets/img/NoImage.png" alt="no image">
@@ -62,14 +62,14 @@
 </template>
 
 <script>
-import Header from '@/components/Header'
+import Title from '@/components/Title'
 import Modal from '@/components/app/Modal'
 import vSelect from 'vue-select'
 
 export default {
   components: {
     'v-select': vSelect,
-    'header-component': Header,
+    'title-component': Title,
     'app-modal': Modal
   },
   data() {
@@ -93,6 +93,7 @@ export default {
   },
   created() {
     Event.$on('searching', (value) => { this.filterBy.search = value });
+    Event.$on('close-modal', () => { setTimeout(() => { this.modal.show = false }, 3000) });
     this.fetchCharacters();
   },
   methods: {
@@ -101,6 +102,7 @@ export default {
         .then(response => {
           this.characters = response.body;
           Event.$emit('resultsAll', this.characters.length, 'Characters');
+          console.log(response.body);
           this.fetchHouses();
         }, error => {
           if (error.status && error.statusText) {
@@ -253,7 +255,7 @@ export default {
   padding: 10px;
 }
 
-#character {
+.character {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
@@ -270,32 +272,44 @@ export default {
   border-radius: 10px;
 }
 
-#character h3 {
+.character h3 {
   color: bisque;
   font-style: italic;
   height: 50px;
 }
 
-#character img {
+.character img {
   width: 250px;
   height: 280px;
 }
 
-#character button {
+.character button {
   height: 40px;
   min-width: 150px;
   margin: 15px 0;
-  background-color: chocolate;
+  background-color: #D2691E;
   color: white;
   padding: 10px;
   border-radius: 5px;
   outline: none;
-  border: none;
+  border: 1px solid transparent;
+  transition: .2s ease-in-out;
 }
 
-#character button:hover {
+.character button:hover {
   cursor: pointer;
+  border: 1px solid bisque;
   color: bisque;
+}
+
+.character button:focus {
+  animation-name: button-animation;
+  animation-duration: .7s;
+}
+
+@keyframes button-animation {
+  from { transform: scale(1.5, 1); }
+  to { transform: scale(1, 1); }
 }
 
 @media only screen and (max-width: 768px) {

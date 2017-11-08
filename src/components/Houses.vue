@@ -1,48 +1,88 @@
 <template>
   <div class="wrapper">
-    <header-component></header-component>
+    <title-component></title-component>
+    <app-modal v-if="modal.show">
+      <h2 slot="header">{{modal.data.name}}</h2>
+      <img  slot="img" v-if="modal.data.imageLink" :src="'https://api.got.show' + modal.data.imageLink" :alt="'image of ' + modal.data.name">
+      <img slot="img" v-else src="../assets/img/NoImage.png" alt="No image">
+      <div slot="info">
+        <ul v-if="modal.data.ancestralWeapon && modal.data.ancestralWeapon.length > 0">Ancestral weapon:
+          <li v-for="ancestralWeapon in modal.data.ancestralWeapon" :key="ancestralWeapon.index">{{ancestralWeapon}},</li>
+        </ul>
+        <ul v-if="modal.data.cadetBranch">Cadet branch:
+          <li>{{modal.data.cadetBranch}}</li>
+        </ul>
+        <ul v-if="modal.data.coatOfArms">Coat of arms:
+          <li>{{modal.data.coatOfArms}}</li>
+        </ul>
+        <ul v-if="modal.data.currentLord">Current lord:
+          <li>{{modal.data.currentLord}}</li>
+        </ul>
+        <ul v-if="modal.data.overlord">Overlord:
+          <li>{{modal.data.overlord}}</li>
+        </ul>
+        <ul v-if="modal.data.region">Region:
+          <li>{{modal.data.region}}</li>
+        </ul>
+        <ul v-if="modal.data.title">Title:
+          <li>{{modal.data.title}}</li>
+        </ul>
+        <ul v-if="modal.data.words">Words:
+          <li>{{modal.data.words}}</li>
+        </ul>
+      </div>
+    </app-modal>
     <div id="image-filter">
       <label for="has-photo">
         <p>Images:</p>
       </label>
-      <input v-model="photo" type="checkbox" name="hasPhoto" id="has-photo">
+      <input v-model="filterBy.photo" type="checkbox" name="hasPhoto" id="has-photo">
     </div>
     <div id="houses-container">
-      <div id="house" v-for="house in filteredHouses" :key="house._id">
+      <div id="house" v-for="(house, index) in filteredHouses" :key="house._id">
         <h3>{{house.name}}</h3>
         <img v-if="house.imageLink" :src="'https://api.got.show' + house.imageLink" alt="">
         <img v-else src="../assets/img/NoImage.png" alt="no image">
-        <button type="button">More info</button>
+        <button v-on:click="getHouseInfo(house, index)" type="button">More info</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Header from '@/components/Header'
+import Title from '@/components/Title'
+import Modal from '@/components/app/Modal'
 
 export default {
   components: {
-    'header-component': Header
+    'title-component': Title,
+    'app-modal': Modal
   },
   data() {
     return {
       houses: [],
-      search: '',
-      photo: false
+      filterBy: {
+        search: '',
+        photo: false
+      },
+      modal: {
+        show: false,
+        data: {}
+      }
     }
   },
   created() {
     this.fetchHouses();
-    Event.$on('searching', (value) => { this.search = value })
+    Event.$on('close-modal', () => { setTimeout(() => { this.modal.show = false }, 3000) });
+    Event.$on('searching', (value) => { this.filterBy.search = value })
   },
   computed: {
     filteredHouses() {
       return this.houses.filter((house) => {
-        return house.name.toLowerCase().match(this.search.toLowerCase())
+        return house.name.toLowerCase().match(this.filterBy.search.toLowerCase())
       })
         .filter((house) => {
-          switch (this.photo) {
+          switch (this.filterBy.photo) {
             case true: return house.imageLink != null;
               break;
             default: return house;
@@ -55,13 +95,24 @@ export default {
     fetchHouses() {
       this.$http.get('houses')
         .then(response => {
-          this.houses = response.body;
-          console.log(response.body);
+          this.fetchHousesImages(response.body);
           Event.$emit('resultsAll', this.houses.length, 'Houses');
         }, error => {
           Event.$emit('error', error.status, error.statusText);
         });
     },
+    fetchHousesImages(data) {
+      for (let index = 0; index <= data.length - 1; index++) {
+        if(index >= 4 && index <= 104 && index != 5 && index != 7 && index != 64) {
+          data[index].imageLink = null;
+        }
+        this.houses.push(data[index]);
+      }
+    },
+    getHouseInfo(house) {
+      this.modal.data = house;
+      this.modal.show = true;
+    }
   },
   watch: {
     filteredHouses: (value) => {
@@ -71,7 +122,8 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+$chocolate: chocolate;
 .wrapper {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
@@ -148,7 +200,7 @@ export default {
 }
 
 #house h3 {
-  color: bisque;
+  color: #FFE4C4;
   font-style: italic;
   height: 50px;
 }
@@ -161,12 +213,29 @@ export default {
 
 #house button {
   height: 40px;
-  background-color: chocolate;
+  background-color: $chocolate;
   color: white;
   padding: 10px;
   border-radius: 5px;
   outline: none;
-  border: none;
+  border: 1px solid transparent;
+  transition: .2s ease-in-out;
+}
+
+#house button:hover {
+  cursor: pointer;
+  border: 1px solid bisque;
+  color: bisque;
+}
+
+#house button:focus {
+  animation-name: button-animation;
+  animation-duration: .7s;
+}
+
+@keyframes button-animation {
+  from { transform: scale(1.5, 1); }
+  to { transform: scale(1, 1); }
 }
 
 @media only screen and (max-width: 768px) {

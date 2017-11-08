@@ -13,7 +13,8 @@
         </li>
       </ul>
     </div>
-    <i id="burger" v-on:click="toggleNav()" class="fa fa-bars fa-2x" aria-hidden="true"></i>
+    <i class="menu-button fa fa-bars fa-2x" v-show="menuButton" v-on:click="toggleNav()" aria-hidden="true"></i>
+    <i class="menu-button fa fa-times-circle-o fa-2x" v-show="menuButtonClose" v-on:click="toggleNav()" aria-hidden="true"></i>
   </nav>
 </template>
 
@@ -29,6 +30,8 @@ export default {
       menuItems: ['Characters', 'Houses', 'Cities', 'Episodes'],
       fixed: false,
       showNav: false,
+      menuButton: true,
+      menuButtonClose: false 
     }
   },
   computed: {
@@ -49,9 +52,13 @@ export default {
     },
     toggleNav() {
       this.showNav = !this.showNav;
+      this.menuButton = !this.menuButton;
+      this.menuButtonClose = !this.menuButtonClose;
     },
     hideNav() {
       this.showNav = false;
+      this.menuButton = !this.menuButton;
+      this.menuButtonClose = !this.menuButtonClose;
     }
   },
   created() {
@@ -130,7 +137,7 @@ nav .wrapper ul li a:hover {
   color: black;
 }
 
-#burger {
+.menu-button {
   display: none;
 }
 
@@ -159,8 +166,10 @@ nav .wrapper ul li a:hover {
   }
 
   nav .wrapper div a i {
-    top: 230px;
-    left: 110px;
+    top: 110px;
+    border-bottom: white solid 1px;
+    width: 85%;
+    text-align: center;
   }
 
   nav .wrapper div .search-bar {
@@ -171,18 +180,23 @@ nav .wrapper ul li a:hover {
   nav .wrapper ul {
     position: absolute;
     width: 100%;
-    top: 280px;
+    top: 170px;
   }
 
   nav .wrapper ul {
     flex-direction: column;
   }
 
+  nav .wrapper ul li a:hover {
+  background: transparent;
+  color: white;
+}
+
   .toggle-nav {
     transform: translateX(260px);
   }
-
-  #burger {
+  
+  .menu-button {
     display: block;
     position: fixed;
     left: 85%;
@@ -193,6 +207,14 @@ nav .wrapper ul li a:hover {
     background: rgba(0, 0, 0, .8);
     box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
     z-index: 10;
+    animation-name: change-menu-icon;
+    animation-duration: .4s;
+    animation-fill-mode: forwards;
+  }
+
+    @keyframes change-menu-icon {
+    from { transform: rotateY(0deg); }
+    to { transform: rotateY(180deg); }
   }
 }
 </style>

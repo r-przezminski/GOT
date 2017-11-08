@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <header-component></header-component>
+    <title-component></title-component>
     <div id="cities-container">
       <div id="city" v-for="city in filteredCities" :key="city._id">
         <h3>{{city.name}}</h3>
@@ -11,16 +11,18 @@
 </template>
 
 <script>
-import Header  from '@/components/Header'
+import Title  from '@/components/Title'
 
 export default {
   components: {
-    'header-component': Header
+    'title-component': Title
   },
   data() {
     return {
       cities: [],
-      search: ''
+      filterBy: {
+        search: ''
+      }
     }
   },
   methods: {
@@ -33,25 +35,11 @@ export default {
             Event.$emit('error', error.status, error.statusText);
           });
       },
-
-    // fetchCities() {
-    //   fetch('https://api.got.show/api/cities')
-    //     .then((response) => {
-    //       return response.json()
-    //     })
-    //     .then((cities) => {
-    //       this.cities = cities;
-    //       Event.$emit('resultsAll', this.cities.length, 'cities');
-    //     })
-    //     .catch((error) => {
-    //       Event.$emit('error', error.message);
-    //     })
-    // }
   },
     computed: {
       filteredCities() {
         return this.cities.filter((city) => {
-          return city.name.toLowerCase().match(this.search.toLowerCase());
+          return city.name.toLowerCase().match(this.filterBy.search.toLowerCase());
         })
       }
     },
@@ -62,7 +50,7 @@ export default {
   },
     created() {
       this.fetchCities();
-      Event.$on('searching', (value) => { this.search = value });
+      Event.$on('searching', (value) => { this.filterBy.search = value });
     }
   }
 </script>
@@ -116,5 +104,23 @@ export default {
   text-decoration: none;
   color: white;
   font-size: 14px;
+  border: 1px solid transparent;
+  transition: .2s ease-in-out;
+}
+
+#city a:hover {
+  cursor: pointer;
+  border: 1px solid bisque;
+  color: bisque;
+}
+
+#city a:focus {
+  animation-name: button-animation;
+  animation-duration: .7s;
+}
+
+@keyframes button-animation {
+  from { transform: scale(1.5, 1); }
+  to { transform: scale(1, 1); }
 }
 </style>

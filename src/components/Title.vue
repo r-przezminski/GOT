@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <div class="component-title">
     <h2>{{label}}</h2>
     <div id="results-all">
       <p>All: </p>
@@ -9,7 +9,7 @@
       <p>Matched:</p>
       <h4>{{results.matched}}</h4>
     </div>
-  </header>
+  </div>
 </template>
 
 <script>
@@ -36,7 +36,7 @@ export default {
 </script>
 
 <style scoped>
-header {
+.component-title {
   grid-column: 1/13;
   grid-row: 1/2;
   display: grid;
@@ -45,7 +45,7 @@ header {
   padding: 20px;
 }
 
-header h2 {
+.component-title h2 {
   grid-column: 1/13;
   grid-row: 1/2;
   color: chocolate;
@@ -69,11 +69,11 @@ header h2 {
   margin-top: 5px;
 }
 
-header p {
+.component-title  p {
   font-style: italic;
 }
 
-header h4 {
+.component-title  h4 {
   color: chocolate;
   margin-left: 10px;
 }
