@@ -73,10 +73,7 @@ export default {
     "app-modal": Modal
   },
   data() {
-    return {
-      //   filterGender: "All",
-      //   filterHouses: []
-    };
+    return {}
   },
   computed: {
     ...mapGetters([
@@ -95,12 +92,6 @@ export default {
       "genderFilterHandler",
       "housesFilterHandler"
     ])
-
-    // getCharacterInfo(character) {
-    //   Event.$emit("show-header");
-    //   this.modal.data = character;
-    //   this.modal.show = true;
-    // }
   },
   created() {
     if (!this.filteredCharacters.length) {
@@ -108,108 +99,6 @@ export default {
       this.getHouses("houses");
     }
   },
-  watch: {
-    // filterGender: function(gender) {
-    //   this.filterGenderHandler(gender);
-    // },
-    // filterHouses: function(houses) {
-    //   this.filterHousesHandler(houses);
-    // }
-    //   filteredCharacters: (value) => {
-    //     Event.$emit('resultsMatched', value.length);
-    //   }
-  }
-
-  //   data() {
-  //     return {
-  //       characters: [],
-  //       filterBy: {
-  //         search: '',
-  //         gender: {
-  //           options: ['All', 'Female', 'Male'],
-  //           value: 'All'
-  //         },
-  //         photo: false,
-  //         houses: []
-  //       },
-  //       houses: [],
-  //       modal: {
-  //         show: false,
-  //         data: {}
-  //       }
-  //     }
-  //   },
-  //   created() {
-  //     Event.$on('searching', (value) => { this.filterBy.search = value });
-  //     Event.$on('close-modal', () => { setTimeout(() => { this.modal.show = false }, 3000) });
-  //     this.fetchCharacters();
-  //   },
-  //   methods: {
-  //     fetchCharacters() {
-  //       this.$http.get('characters')
-  //         .then(response => {
-  //           this.characters = response.body;
-  //           Event.$emit('resultsAll', this.characters.length, 'Characters');
-  //           console.log(response.body);
-  //           this.fetchHouses();
-  //         }, error => {
-  //           if (error.status && error.statusText) {
-  //             Event.$emit('error', error.status, error.statusText);
-  //           }
-  //           else {
-  //             Event.$emit('error', 'Uppsss', 'An error ocured');
-  //           }
-  //         });
-  //     },
-  //     fetchHouses() {
-  //       this.$http.get('houses')
-  //         .then(response => {
-  //           for (let index = 0; index < response.data.length; index++) {
-  //             this.houses.push(response.data[index].name);
-  //           }
-  //         }, error => {
-  //           Event.$emit('error', error.status, error.statusText);
-  //         });
-  //     },
-
-  //     getRandomCharacter() {
-  //       let random = Math.floor(Math.random() * this.characters.length);
-  //       this.$router.push({ name: 'Character', params: { id: this.characters[random]._id } });
-  //     },
-  //   },
-  //   computed: {
-  //     filteredCharacters() {
-  //       return this.characters.filter((character) => {
-  //         return character.name.toLowerCase().match(this.filterBy.search.toLowerCase());
-  //       })
-  //         .filter((character) => {
-  //           switch (this.filterBy.gender.value) {
-  //             case "Male": return character.male == true;
-  //               break;
-  //             case "Female": return character.male == false;
-  //               break;
-  //             default: return character;
-  //               break;
-  //           }
-  //         })
-  //         .filter((character) => {
-  //           switch (this.filterBy.photo) {
-  //             case true: return character.imageLink != null;
-  //               break;
-  //             default: return character;
-  //               break;
-  //           }
-  //         })
-  //         .filter((character) => {
-  //           if (this.filterBy.houses.length > 0) {
-  //             return character.house != null && this.filterBy.houses.includes(character.house);
-  //           }
-  //           else {
-  //             return character;
-  //           }
-  //         })
-  //     }
-  //   },
 };
 </script>
 
