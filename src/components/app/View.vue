@@ -24,21 +24,21 @@ export default {
     }
   },
   created() { 
-    XhrInterceptors.push((request, next) => {
-        this.loading = true;
-        this.main = false;
-        this.error = false;
-        Event.$emit('clearFilter');
-      next((response) => {
-        this.loading = false;
-        this.main = true;
-      });
-    });
-    Event.$on('error', () => { 
-      this.error = true;
-      this.main = false;
-      this.loading = false;
-    })
+    // XhrInterceptors.push((request, next) => {
+    //     this.loading = true;
+    //     this.main = false;
+    //     this.error = false;
+    //     Event.$emit('clearFilter');
+    //   next((response) => {
+    //     this.loading = false;
+    //     this.main = true;
+    //   });
+    // });
+    // Event.$on('error', () => { 
+    //   this.error = true;
+    //   this.main = false;
+    //   this.loading = false;
+    // })
   },
 }
 </script>

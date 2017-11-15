@@ -1,46 +1,51 @@
 <template>
   <div>
     <div class="search">
-      <input v-model="search" v-on:keyup="searching()" type="text" placeholder="Search...">
+      <input v-model="search" v-on:keyup="searching(search)" type="text" placeholder="Search...">
       <i class="fa fa-search" aria-hidden="true"></i>
     </div>
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   data() {
     return {
-      search: '',
+      search: "",
       results: {
         visible: false,
-        label: '',
+        label: "",
         all: 0,
         matched: 0
       }
-    }
+    };
   },
   methods: {
-    searching() {
-      Event.$emit('searching', this.search);
-    },
+    // searching() {
+    //   Event.$emit('searching', this.search);
+    // },
+    ...mapActions(["searching"])
   },
   created() {
-    Event.$on('clearFilter', () => { this.search = ''; })
+    Event.$on("clearFilter", () => {
+      this.search = "";
+    });
   },
   computed: {
     triggerResults() {
       return {
-        'show-result': this.results.visible && window.innerWidth > 700
-      }
+        "show-result": this.results.visible && window.innerWidth > 700
+      };
     }
   },
   filters: {
-    firstToUpper: (value) => {
-      return value.charAt(0).toUpperCase() + value.slice(1)
+    firstToUpper: value => {
+      return value.charAt(0).toUpperCase() + value.slice(1);
     }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -55,7 +60,7 @@ export default {
   top: 23px;
   left: 90px;
   color: white;
-  transition: .5s ease;
+  transition: 0.5s ease;
 }
 
 .search input {
@@ -72,7 +77,7 @@ export default {
   border-bottom: 1px solid white;
   background: transparent;
   color: white;
-  transition: .5s ease;
+  transition: 0.5s ease;
 }
 
 .search input:focus {
@@ -80,7 +85,7 @@ export default {
   border-bottom: 1px solid chocolate;
 }
 
-.search input:focus~i {
+.search input:focus ~ i {
   color: chocolate;
 }
 

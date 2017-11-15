@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <title-component></title-component>
+    <title-component v-bind:number="123"></title-component>
     <app-modal v-if="modal.show">
       <h2 slot="header">{{modal.data.name}}</h2>
       <img  slot="img" v-if="modal.data.imageLink" :src="'https://api.got.show' + modal.data.imageLink" :alt="'image of ' + modal.data.name">
@@ -74,7 +74,7 @@ export default {
   created() {
     this.fetchHouses();
     Event.$on('close-modal', () => { setTimeout(() => { this.modal.show = false }, 3000) });
-    Event.$on('searching', (value) => { this.filterBy.search = value })
+    Event.$on('searching', value => { this.filterBy.search = value })
   },
   computed: {
     filteredHouses() {

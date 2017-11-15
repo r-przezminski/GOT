@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <title-component></title-component>
-    <app-modal v-if="modal.show">
+    <!-- <app-modal v-if="modal.show">
       <h2 slot="header">{{modal.data.name}}</h2>
       <img  slot="img" v-if="modal.data.imageLink" :src="'https://api.got.show' + modal.data.imageLink" :alt="'image of ' + modal.data.name">
       <img slot="img" v-else src="../assets/img/NoImage.png" alt="No image">
@@ -31,147 +31,186 @@
           <li v-for="book in modal.data.books" :key="book.index">{{book}},</li>
         </ul>
       </div>
-    </app-modal>
+    </app-modal> -->
     <div id="image-filter">
       <label for="has-photo">
         <p>Images:</p>
       </label>
-      <input v-model="filterBy.photo" type="checkbox" name="hasPhoto" id="has-photo">
+      <input :checked="imageLinkFilterStatus" @click="imageLinkFilterHandler"  type="checkbox" name="hasPhoto" id="has-photo">
     </div>
     <div id="gender-filter">
       <label for="gender">
         <p>Filter by gender:</p>
       </label>
-      <v-select v-model="filterBy.gender.value" :options="filterBy.gender.options" id="gender"></v-select>
+      <v-select :value="genderFilter" :on-change="genderFilterHandler" :options="['All', 'Female', 'Male']" id="gender"></v-select>
     </div>
     <div id="house-filter">
       <label for="houses">
         <p>Filter by house:</p>
       </label>
-      <v-select v-model="filterBy.houses" multiple :options="houses" id="houses"></v-select>
+      <v-select :value="housesFilter" multiple :on-change="housesFilterHandler" :options="houses" id="houses"></v-select>
     </div>
-    <div id="characters-container">
+    <div id='characters-container'>
       <div class="character" v-for="(character, index) in filteredCharacters" :key="character._id">
         <h3>{{character.name}}</h3>
-        <img v-if="character.imageLink" :src="'https://api.got.show' + character.imageLink" alt="">
-        <img v-else src="../assets/img/NoImage.png" alt="no image">
-        <button v-on:click="getCharacterInfo(character)" type="button">More info</button>
+        <img :src="character.imageLink" alt="character image">
+        <button @click="getCharacterInfo(character)" type="button">More info</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import Title from '@/components/Title'
-import Modal from '@/components/app/Modal'
-import vSelect from 'vue-select'
+import Title from "@/components/Title";
+import Modal from "@/components/app/Modal";
+import vSelect from "vue-select";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
-    'v-select': vSelect,
-    'title-component': Title,
-    'app-modal': Modal
+    "v-select": vSelect,
+    "title-component": Title,
+    "app-modal": Modal
   },
   data() {
     return {
-      characters: [],
-      filterBy: {
-        search: '',
-        gender: {
-          options: ['All', 'Female', 'Male'],
-          value: 'All'
-        },
-        photo: false,
-        houses: []
-      },
-      houses: [],
-      modal: {
-        show: false,
-        data: {}
-      }
-    }
-  },
-  created() {
-    Event.$on('searching', (value) => { this.filterBy.search = value });
-    Event.$on('close-modal', () => { setTimeout(() => { this.modal.show = false }, 3000) });
-    this.fetchCharacters();
-  },
-  methods: {
-    fetchCharacters() {
-      this.$http.get('characters')
-        .then(response => {
-          this.characters = response.body;
-          Event.$emit('resultsAll', this.characters.length, 'Characters');
-          console.log(response.body);
-          this.fetchHouses();
-        }, error => {
-          if (error.status && error.statusText) {
-            Event.$emit('error', error.status, error.statusText);
-          }
-          else {
-            Event.$emit('error', 'Uppsss', 'An error ocured');
-          }
-        });
-    },
-    fetchHouses() {
-      this.$http.get('houses')
-        .then(response => {
-          for (let index = 0; index < response.data.length; index++) {
-            this.houses.push(response.data[index].name);
-          }
-        }, error => {
-          Event.$emit('error', error.status, error.statusText);
-        });
-    },
-    getCharacterInfo(character) {
-      Event.$emit('show-header');
-      this.modal.data = character;
-      this.modal.show = true;
-    },
-    getRandomCharacter() {
-      let random = Math.floor(Math.random() * this.characters.length);
-      this.$router.push({ name: 'Character', params: { id: this.characters[random]._id } });
-    },
+      //   filterGender: "All",
+      //   filterHouses: []
+    };
   },
   computed: {
-    filteredCharacters() {
-      return this.characters.filter((character) => {
-        return character.name.toLowerCase().match(this.filterBy.search.toLowerCase());
-      })
-        .filter((character) => {
-          switch (this.filterBy.gender.value) {
-            case "Male": return character.male == true;
-              break;
-            case "Female": return character.male == false;
-              break;
-            default: return character;
-              break;
-          }
-        })
-        .filter((character) => {
-          switch (this.filterBy.photo) {
-            case true: return character.imageLink != null;
-              break;
-            default: return character;
-              break;
-          }
-        })
-        .filter((character) => {
-          if (this.filterBy.houses.length > 0) {
-            return character.house != null && this.filterBy.houses.includes(character.house);
-          }
-          else {
-            return character;
-          }
-        })
+    ...mapGetters([
+      "filteredCharacters",
+      "houses",
+      "imageLinkFilterStatus",
+      "genderFilter",
+      "housesFilter"
+    ])
+  },
+  methods: {
+    ...mapActions([
+      "getCharacters",
+      "getHouses",
+      "imageLinkFilterHandler",
+      "genderFilterHandler",
+      "housesFilterHandler"
+    ])
+
+    // getCharacterInfo(character) {
+    //   Event.$emit("show-header");
+    //   this.modal.data = character;
+    //   this.modal.show = true;
+    // }
+  },
+  created() {
+    if (!this.filteredCharacters.length) {
+      this.getCharacters("characters");
+      this.getHouses("houses");
     }
   },
   watch: {
-    filteredCharacters: (value) => {
-      Event.$emit('resultsMatched', value.length);
-    }
-  },
-}
+    // filterGender: function(gender) {
+    //   this.filterGenderHandler(gender);
+    // },
+    // filterHouses: function(houses) {
+    //   this.filterHousesHandler(houses);
+    // }
+    //   filteredCharacters: (value) => {
+    //     Event.$emit('resultsMatched', value.length);
+    //   }
+  }
+
+  //   data() {
+  //     return {
+  //       characters: [],
+  //       filterBy: {
+  //         search: '',
+  //         gender: {
+  //           options: ['All', 'Female', 'Male'],
+  //           value: 'All'
+  //         },
+  //         photo: false,
+  //         houses: []
+  //       },
+  //       houses: [],
+  //       modal: {
+  //         show: false,
+  //         data: {}
+  //       }
+  //     }
+  //   },
+  //   created() {
+  //     Event.$on('searching', (value) => { this.filterBy.search = value });
+  //     Event.$on('close-modal', () => { setTimeout(() => { this.modal.show = false }, 3000) });
+  //     this.fetchCharacters();
+  //   },
+  //   methods: {
+  //     fetchCharacters() {
+  //       this.$http.get('characters')
+  //         .then(response => {
+  //           this.characters = response.body;
+  //           Event.$emit('resultsAll', this.characters.length, 'Characters');
+  //           console.log(response.body);
+  //           this.fetchHouses();
+  //         }, error => {
+  //           if (error.status && error.statusText) {
+  //             Event.$emit('error', error.status, error.statusText);
+  //           }
+  //           else {
+  //             Event.$emit('error', 'Uppsss', 'An error ocured');
+  //           }
+  //         });
+  //     },
+  //     fetchHouses() {
+  //       this.$http.get('houses')
+  //         .then(response => {
+  //           for (let index = 0; index < response.data.length; index++) {
+  //             this.houses.push(response.data[index].name);
+  //           }
+  //         }, error => {
+  //           Event.$emit('error', error.status, error.statusText);
+  //         });
+  //     },
+
+  //     getRandomCharacter() {
+  //       let random = Math.floor(Math.random() * this.characters.length);
+  //       this.$router.push({ name: 'Character', params: { id: this.characters[random]._id } });
+  //     },
+  //   },
+  //   computed: {
+  //     filteredCharacters() {
+  //       return this.characters.filter((character) => {
+  //         return character.name.toLowerCase().match(this.filterBy.search.toLowerCase());
+  //       })
+  //         .filter((character) => {
+  //           switch (this.filterBy.gender.value) {
+  //             case "Male": return character.male == true;
+  //               break;
+  //             case "Female": return character.male == false;
+  //               break;
+  //             default: return character;
+  //               break;
+  //           }
+  //         })
+  //         .filter((character) => {
+  //           switch (this.filterBy.photo) {
+  //             case true: return character.imageLink != null;
+  //               break;
+  //             default: return character;
+  //               break;
+  //           }
+  //         })
+  //         .filter((character) => {
+  //           if (this.filterBy.houses.length > 0) {
+  //             return character.house != null && this.filterBy.houses.includes(character.house);
+  //           }
+  //           else {
+  //             return character;
+  //           }
+  //         })
+  //     }
+  //   },
+};
 </script>
 
 <style>
@@ -201,7 +240,7 @@ export default {
   position: relative;
   cursor: pointer;
   outline: none;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 #image-filter input[type="checkbox"]:checked {
@@ -215,10 +254,10 @@ export default {
   height: 1em;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 0 .25em rgba(0, 0, 0, .3);
-  transform: scale(.7);
+  box-shadow: 0 0 0.25em rgba(0, 0, 0, 0.3);
+  transform: scale(0.7);
   left: 0;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 #image-filter input[type="checkbox"]:checked:after {
@@ -264,8 +303,8 @@ export default {
   width: 300px;
   height: 420px;
   margin-bottom: 20px;
-  background: rgba(0, 0, 0, .8);
-  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.6);
   text-align: center;
   border-bottom: 1px solid bisque;
   border-right: 1px solid bisque;
@@ -287,13 +326,13 @@ export default {
   height: 40px;
   min-width: 150px;
   margin: 15px 0;
-  background-color: #D2691E;
+  background-color: #d2691e;
   color: white;
   padding: 10px;
   border-radius: 5px;
   outline: none;
   border: 1px solid transparent;
-  transition: .2s ease-in-out;
+  transition: 0.2s ease-in-out;
 }
 
 .character button:hover {
@@ -304,12 +343,16 @@ export default {
 
 .character button:focus {
   animation-name: button-animation;
-  animation-duration: .7s;
+  animation-duration: 0.7s;
 }
 
 @keyframes button-animation {
-  from { transform: scale(1.5, 1); }
-  to { transform: scale(1, 1); }
+  from {
+    transform: scale(1.5, 1);
+  }
+  to {
+    transform: scale(1, 1);
+  }
 }
 
 @media only screen and (max-width: 768px) {

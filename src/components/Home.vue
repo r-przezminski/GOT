@@ -25,8 +25,7 @@
 </template>
 
 <script>
-export default {
-}
+export default {};
 </script>
 
 <style scoped>
@@ -40,9 +39,9 @@ export default {
 #characters {
   grid-column: 1/3;
   grid-row: 1/4;
-  background-image: url('../assets/img/characters.jpg');
+  background-image: url("../assets/img/characters.jpg");
   background-repeat: round;
-  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.6);
 }
 
 #characters-article {
@@ -53,12 +52,12 @@ export default {
 #snow {
   grid-column: 2/5;
   grid-row: 4/7;
-  background-image: url('../assets/img/snow.png');
+  background-image: url("../assets/img/snow.png");
   background-repeat: no-repeat;
   background-position-x: -200px;
   background-size: cover;
   background-attachment: fixed;
-  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.6);
 }
 
 #snow-article {
@@ -69,9 +68,9 @@ export default {
 #houses {
   grid-column: 1/2;
   grid-row: 7/9;
-  background-image: url('../assets/img/houses.jpg');
+  background-image: url("../assets/img/houses.jpg");
   background-repeat: round;
-  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.6);
 }
 
 #houses-article {
@@ -82,9 +81,9 @@ export default {
 #cities {
   grid-column: 3/4;
   grid-row: 7/9;
-  background-image: url('../assets/img/cities.jpg');
+  background-image: url("../assets/img/cities.jpg");
   background-repeat: round;
-  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.6);
 }
 
 #cities-article {
@@ -93,22 +92,22 @@ export default {
 }
 
 #winter-is-coming {
-  background-image: url('../assets/img/winter-is-coming.png');
+  background-image: url("../assets/img/winter-is-coming.png");
   background-repeat: round;
   grid-column: 1/5;
   grid-row: 9/12;
-  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.6);
 }
 
 article {
   padding: 15px;
-  background: rgba(0, 0, 0, .3);
+  background: rgba(0, 0, 0, 0.3);
   height: 100%;
-  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.6);
 }
 
 article .title {
-  background: rgba(0, 0, 0, .2);
+  background: rgba(0, 0, 0, 0.2);
   color: bisque;
   font-style: italic;
   text-align: center;
@@ -118,7 +117,7 @@ article .title {
 article .content {
   padding: 10px 20px;
   text-align: justify;
-  color: rgba(0, 0, 0, .7);
+  color: rgba(0, 0, 0, 0.7);
 }
 
 @media only screen and (max-width: 768px) {
