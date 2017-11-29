@@ -3,11 +3,11 @@
     <h2>{{label}}</h2>
     <div id="results-all">
       <p>All: </p>
-      <!-- <h4>{{results.all}}</h4> -->
+      <h4>{{all}}</h4>
     </div>
     <div id="results-matched">
       <p>Matched:</p>
-      <!-- <h4>{{results.matched}}</h4> -->
+      <h4>{{matched}}</h4>
     </div>
   </div>
 </template>
@@ -16,29 +16,13 @@
 import { mapGetters, mapActions } from "vuex";
 
 export default {
-  data() {
-    return {
-      //   label: '',
-      //   results: {
-      //     all: '',
-      //     matched: ''
-      //   },
-    };
-  },
   computed: {
-    ...mapGetters(["label"])
+    ...mapGetters(["label", "matched", "all"])
   },
   methods: {
     ...mapActions(["getLabel"])
   },
   created() {
-    // Event.$on('resultsAll', (all, label) => {
-    //   this.results.all = all;
-    //   this.label = label;
-    // });
-    // Event.$on('resultsMatched', (matched) => {
-    //   this.results.matched = matched;
-    // });
     this.getLabel(this.$route.name);
   }
 };

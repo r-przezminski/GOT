@@ -1,11 +1,11 @@
 <template>
-  <div style="z-index: 10;" v-bind:class="{'hide-mask': modalAnimation.mask}">
+  <div style="z-index: 10;" :class="{'hide-mask': modalAnimation.mask}">
     <div id="modal-mask">
       <div id="modal-header">
-        <div v-bind:class="{'hide-title': modalAnimation.title}"><slot name="header"></slot></div>
-        <div id="i" v-bind:class="{'hide-close-button': modalAnimation.closeButton}"><i v-on:click="closeModal()" class="fa fa-times-circle-o fa-2x" aria-hidden="true"></i></div> 
+        <div :class="{'hide-title': modalAnimation.title}"><slot name="header"></slot></div>
+        <div id="i" :class="{'hide-close-button': modalAnimation.closeButton}"><i @click="closeModal()" class="fa fa-times-circle-o fa-2x" aria-hidden="true"></i></div> 
       </div>
-      <div v-bind:class="{'hide-body': modalAnimation.body}">
+      <div :class="{'hide-body': modalAnimation.body}">
       <div id="modal-body">
         <slot name="img"></slot>
         <div id="info">
@@ -31,7 +31,7 @@ export default {
         body: false,
         mask: false
       }
-    }
+    };
   },
   methods: {
     closeModal() {
@@ -39,9 +39,11 @@ export default {
       this.modalAnimation.closeButton = true;
       this.modalAnimation.body = true;
       this.modalAnimation.mask = true;
-      Event.$emit('close-modal');
+      setTimeout(() => {
+        this.$store.dispatch("switchModal");
+      }, 2500);
     }
-  },
+  }
 };
 </script>
 
@@ -76,7 +78,7 @@ export default {
 }
 
 #modal-header #i {
-  position: absolute; 
+  position: absolute;
   top: -30px;
   left: 93%;
 }
@@ -86,7 +88,7 @@ export default {
   transition: 0.2s ease-in-out;
   position: absolute;
   opacity: 0;
-  animation-duration: .75s;
+  animation-duration: 0.75s;
   animation-name: bounce-modal-closeButton;
   animation-direction: alternate;
   animation-fill-mode: forwards;
@@ -146,17 +148,17 @@ img {
 }
 
 .hide-close-button {
-  animation-duration: .3s;
+  animation-duration: 0.3s;
   animation-name: hide-close-button;
   animation-fill-mode: forwards;
-  animation-delay: .5s;
+  animation-delay: 0.5s;
 }
 
 .hide-body {
   animation-duration: 1.5s;
   animation-name: hide-body;
   animation-fill-mode: forwards;
-  animation-delay: .5s;
+  animation-delay: 0.5s;
 }
 
 .hide-mask {
@@ -166,56 +168,123 @@ img {
 }
 
 @keyframes hide-title {
-  15% { transform: scale(0.5, 1); }
-  35% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+  15% {
+    transform: scale(0.5, 1);
+  }
+  35% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 @keyframes hide-close-button {
-  from { left: 93%; }
-  to { left: 110%; }
+  from {
+    left: 93%;
+  }
+  to {
+    left: 110%;
+  }
 }
 
 @keyframes hide-body {
-  from { transform: scale(1) rotate(0deg); }
-  to { transform: scale(0) rotate(450deg); }
+  from {
+    transform: scale(1) rotate(0deg);
+  }
+  to {
+    transform: scale(0) rotate(450deg);
+  }
 }
 
 @keyframes hide-mask {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes show-modal-mask {
-  0% { left: 50%; top: 50%; width: 1%; height: 20%; }
-  25% { left: 0; width: 100%; }
-  50% { height: 12%; top: 50%; }
-  70%{ top: 0; height: 100%; }
-  75%{ transform: scale(1.1); }
-  90%{ transform: scale(.8); }
-  100% { height: 100%; width: 100%; }
+  0% {
+    left: 50%;
+    top: 50%;
+    width: 1%;
+    height: 20%;
+  }
+  25% {
+    left: 0;
+    width: 100%;
+  }
+  50% {
+    height: 12%;
+    top: 50%;
+  }
+  70% {
+    top: 0;
+    height: 100%;
+  }
+  75% {
+    transform: scale(1.1);
+  }
+  90% {
+    transform: scale(0.8);
+  }
+  100% {
+    height: 100%;
+    width: 100%;
+  }
 }
 
 @keyframes show-modal-title {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes show-modal-body {
-  0% { transform: scale(0.5); }
-  25% { transform: scale(1.1); }
-  50% { transform: scale(1); }
-  75% { transform: scale(1.03); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0.5);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  50% {
+    transform: scale(1);
+  }
+  75% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes bounce-modal-closeButton {
-  0% { opacity: 1; transform: translateY(-30px)}
-  20% { transform: translateY(48px); }
-  50% { transform: translateY(35px); }
-  70% { transform: translateY(48px); }
-  90% { transform: translateY(42px); }
-  100% { opacity: 1; transform: translateY(48px); }
+  0% {
+    opacity: 1;
+    transform: translateY(-30px);
+  }
+  20% {
+    transform: translateY(48px);
+  }
+  50% {
+    transform: translateY(35px);
+  }
+  70% {
+    transform: translateY(48px);
+  }
+  90% {
+    transform: translateY(42px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(48px);
+  }
 }
 
 @media only screen and (max-width: 768px) {
@@ -229,15 +298,15 @@ img {
   }
 
   #info {
-    font-size: .5em;
+    font-size: 0.5em;
   }
 }
 
 @media only screen and (max-width: 480px) {
-    #modal-header #i {
+  #modal-header #i {
     left: 85%;
   }
-  
+
   #modal-body {
     flex-direction: column;
     align-items: center;
@@ -251,7 +320,7 @@ img {
   }
 
   #info {
-    font-size: .7em;
+    font-size: 0.7em;
   }
 }
 </style>

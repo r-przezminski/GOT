@@ -1,20 +1,25 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
-import * as actions from './actions';
-import * as getters from './getters';
-import state from './state'
-import mutations from './mutations'
+import Vue from 'vue'
+import Vuex from 'vuex'
+import * as actions from './actions'
+import * as getters from './getters'
+import title from './modules/title'
+import error from './modules/error'
+import modal from './modules/modal'
 import characters from './modules/characters'
+
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
-	state,
-	mutations,
+const store = new Vuex.Store({
 	actions,
 	getters,
 	modules: {
-		characters
+		title,
+		error,
+		characters,
+		modal
 	},
 	strict: true
 });
+
+export default store

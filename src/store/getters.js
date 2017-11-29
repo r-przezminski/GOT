@@ -1,3 +1,4 @@
-export const label = (state => {
-	return state.results.label
-})
+// export const getModalStatus = state => {
+// 	return state.modal
+// 	console.log(state);
+// }

@@ -1,37 +1,33 @@
 <template>
   <div class="wrapper">
     <title-component></title-component>
-    <!-- <app-modal v-if="modal.show">
-      <h2 slot="header">{{modal.data.name}}</h2>
-      <img  slot="img" v-if="modal.data.imageLink" :src="'https://api.got.show' + modal.data.imageLink" :alt="'image of ' + modal.data.name">
-      <img slot="img" v-else src="../assets/img/NoImage.png" alt="No image">
+    <app-modal v-if="getModalStatus">
+      <h2 slot="header">{{character.name}}</h2>
+      <img slot="img" :src="character.imageLink" alt="">
       <div slot="info">
-        <ul v-if="modal.data.titles && modal.data.titles.length > 0">Titles:
-          <li v-for="title in modal.data.titles" :key="title.index">{{title}},</li>
+        <ul>Titles:
+          <li v-for="title in character.titles" :key="title.index">{{title}}</li>
         </ul>
-        <ul v-if="modal.data.house">House:
-          <li>{{modal.data.house}}</li>
+        <ul>House:
+          <li>{{character.house}}</li>
         </ul>
-        <ul v-if="modal.data.culture">Culture:
-          <li>{{modal.data.culture}}</li>
+        <ul>Culture:
+          <li>{{character.culture}}</li>
         </ul>
-        <ul v-if="modal.data.region">Region:
-          <li>{{modal.data.region}}</li>
+        <ul>Spouse:
+          <li>{{character.spouse}}</li>
         </ul>
-        <ul v-if="modal.data.spouse">Spouse:
-          <li>{{modal.data.spouse}}</li>
+        <ul>Date of birth:
+          <li>{{character.dateOfBirth}}</li>
         </ul>
-        <ul v-if="modal.data.dateOfBirth">Date of birth:
-          <li>{{modal.data.dateOfBirth}}</li>
+        <ul>Date of death:
+          <li>{{character.dateOfDeath}}</li>
         </ul>
-        <ul v-if="modal.data.dateOfDeath">Date of death:
-          <li>{{modal.data.dateOfDeath}}</li>
-        </ul>
-        <ul v-if="modal.data.books && modal.data.books.length > 0">Books:
-          <li v-for="book in modal.data.books" :key="book.index">{{book}},</li>
+        <ul>Books:
+          <li v-for="book in character.books" :key="book.index">{{book}}</li>
         </ul>
       </div>
-    </app-modal> -->
+    </app-modal>
     <div id="image-filter">
       <label for="has-photo">
         <p>Images:</p>
@@ -73,7 +69,9 @@ export default {
     "app-modal": Modal
   },
   data() {
-    return {}
+    return {
+      character: {}
+    };
   },
   computed: {
     ...mapGetters([
@@ -81,7 +79,8 @@ export default {
       "houses",
       "imageLinkFilterStatus",
       "genderFilter",
-      "housesFilter"
+      "housesFilter",
+      "getModalStatus"
     ])
   },
   methods: {
@@ -90,8 +89,14 @@ export default {
       "getHouses",
       "imageLinkFilterHandler",
       "genderFilterHandler",
-      "housesFilterHandler"
-    ])
+      "housesFilterHandler",
+      "updateTitleResultMatched",
+      "switchModal"
+    ]),
+    getCharacterInfo(character) {
+      this.character = character;
+      this.switchModal();
+    }
   },
   created() {
     if (!this.filteredCharacters.length) {
@@ -99,6 +104,11 @@ export default {
       this.getHouses("houses");
     }
   },
+  watch: {
+    filteredCharacters: function(result) {
+      this.updateTitleResultMatched(result.length);
+    }
+  }
 };
 </script>
 
@@ -232,15 +242,15 @@ export default {
 
 .character button:focus {
   animation-name: button-animation;
-  animation-duration: 0.7s;
+  animation-duration: 0.3s;
 }
 
 @keyframes button-animation {
   from {
-    transform: scale(1.5, 1);
+    transform: scale(1.1);
   }
   to {
-    transform: scale(1, 1);
+    transform: scale(1);
   }
 }
 

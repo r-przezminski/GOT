@@ -4,6 +4,11 @@ export const searching = ({ commit }, value) => {
 	commit(types.RECEIVE_SEARCH_FILTER, value)
 }
 
-export const getLabel = ({ commit }, label) => {
-	commit(types.RECEIVE_LABEL, label)
+export const openModal = ({ commit }, value) => {
+	commit(types.OPEN_MODAL, value)
 }
+
+export const closeModal = ({ commit }, value) => {
+	commit(types.CLOSE_MODAL, value)
+}
+

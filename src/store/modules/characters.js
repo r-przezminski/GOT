@@ -60,24 +60,23 @@ const getters = {
 	},
 	housesFilter: state => {
 		return state.filterBy.houses
-	}
+	},
 }
 
 const actions = {
 	getCharacters: ({ commit }, url) => {
 		http.get(url).then(response => {
 			commit(types.RECEIVE_CHARACTERS, response.data)
+			commit(types.RECEIVE_TITLE_RESULT_ALL, response.data.length)
 		}).catch(error => {
-			console.log(error);
-			//TO DO: Error handling
+			commit(types.RECEIVE_ERROR, error)
 		});
 	},
 	getHouses: ({ commit }, url) => {
 		http.get(url).then(response => {
 			commit(types.RECEIVE_HOUSES, response.data)
 		}).catch(error => {
-			console.log(error);
-			//TO DO: Error handling
+			commit(types.RECEIVE_ERROR, error)
 		});
 	},
 	imageLinkFilterHandler: ({ commit }) => {
@@ -92,23 +91,27 @@ const actions = {
 }
 
 const mutations = {
-	[types.RECEIVE_CHARACTERS](state, characters) {
+	[types.RECEIVE_CHARACTERS]: (state, characters) => {
 		state.characters = fetchCharacters(characters)
 	},
-	[types.RECEIVE_HOUSES](state, houses) {
+	[types.RECEIVE_HOUSES]: (state, houses) => {
 		state.houses = fetchHouses(houses)
 	},
-	[types.RECEIVE_SEARCH_FILTER](state, search) {
+	[types.RECEIVE_SEARCH_FILTER]: (state, search) => {
 		state.filterBy.search = search
 	},
-	[types.SWITCH_IMAGE_FILTER](state) {
+	[types.SWITCH_IMAGE_FILTER]: (state) => {
 		state.filterBy.imageLink = !state.filterBy.imageLink
 	},
-	[types.RECEIVE_GENDER_FILTER](state, gender) {
+	[types.RECEIVE_GENDER_FILTER]: (state, gender) => {
 		state.filterBy.gender = gender
 	},
-	[types.RECEIVE_HOUSES_FILTER](state, houses) {
-		state.filterBy.houses = houses
+	[types.RECEIVE_HOUSES_FILTER]: (state, houses) => {
+		// state.filterBy.houses = houses
+		// console.log(houses);
+		houses.forEach(house => {
+			this.state.filterBy.houses.push(house)
+		})
 		// TO DO: Remove Do not mutate vuex store state outside mutation handlers.
 	}
 }
@@ -117,32 +120,30 @@ const mutations = {
  * @param {Object} characters - data from API
  * @returns {Object} characters - matched data properties 
  */
-
 const fetchCharacters = characters => {
 	const fetchedCharacters = []
 	characters.forEach(character => {
 		fetchedCharacters.push({
+			id: character._id,
 			name: character.name,
-			// titles: character.titles.length ? character.titles : [globals.NO_INFO],
-			// books: character.books.length ? character.books : [globals.NO_INFO],
 			male: character.male,
 			imageLink: character.imageLink ? globals.BASE_API_URL + character.imageLink : globals.NO_IMAGE,
 			house: character.house ? character.house : globals.NO_INFO,
-			// culture: character.culture ? character.culture : globals.NO_INFO,
-			// spouse: character.spouse ? character.spouse : globals.NO_INFO,
-			// dateOfBirth: character.dateOfBirth ? character.dateOfBirth : globals.NO_INFO,
-			// dateOfDeath: character.dateOfDeath ? character.dateOfDeath : globals.NO_INFO,
+			titles: character.titles.length ? character.titles : [globals.NO_INFO],
+			books: character.books.length ? character.books : [globals.NO_INFO],
+			culture: character.culture ? character.culture : globals.NO_INFO,
+			spouse: character.spouse ? character.spouse : globals.NO_INFO,
+			dateOfBirth: character.dateOfBirth ? character.dateOfBirth : globals.NO_INFO,
+			dateOfDeath: character.dateOfDeath ? character.dateOfDeath : globals.NO_INFO,
 		})
 	});
 	return fetchedCharacters;
 }
 
 /**
- * 
  * @param {Object} houses - data from API
- * @returns {array} houses - array of house names 
+ * @returns {array} houses - array of houses name 
  */
-
 const fetchHouses = houses => {
 	const fetchedHouses = []
 	houses.forEach(house => {

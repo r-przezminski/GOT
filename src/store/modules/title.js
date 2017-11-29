@@ -1,0 +1,61 @@
+import * as types from '../types'
+import * as globals from '../../config/globals'
+import axios from 'axios'
+import xhr from '../../config/xhr'
+
+const http = axios.create(xhr)
+
+const state = {
+	label: '',
+	all: '',
+	matched: ''
+}
+
+const getters = {
+	label: state => {
+		return state.label
+	},
+
+	matched: state => {
+		return state.matched
+	},
+
+	all: state => {
+		return state.all
+	}
+}
+
+const actions = {
+	getLabel: ({ commit }, label) => {
+		commit(types.RECEIVE_LABEL, label)
+	},
+
+	updateTitleResultMatched: ({ commit }, value) => {
+		commit(types.UPDATE_TITLE_RESULT_MATCHED, value)
+	},
+
+	// getTitleResultAll: ({ commit }, value) => {
+
+	// }
+}
+
+const mutations = {
+	[types.RECEIVE_LABEL]: (state, label) => {
+		state.label = label
+	},
+
+	[types.UPDATE_TITLE_RESULT_MATCHED]: (state, matched) => {
+		state.matched = matched
+	},
+
+	[types.RECEIVE_TITLE_RESULT_ALL]: (state, all) => {
+		state.all = all
+	}
+}
+
+export default {
+	state,
+	getters,
+	actions,
+	mutations
+}
