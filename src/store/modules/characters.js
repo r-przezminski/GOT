@@ -14,37 +14,23 @@ const state = {
 
 const getters = {
 	filteredCharacters: state => {
-		console.log(state);
-		return state.characters.filter(character => {
-			return character.name.toLowerCase().match(state.filter.search.toLowerCase())
-		}).filter(character => {
-			switch (state.filter.imageLink) {
-				case true:
-					return character.imageLink != globals.NO_IMAGE
-					break
-				default:
-					return true
-			}
-		}).filter(character => {
-			switch (state.filter.gender) {
-				case globals.CHARACTER_MALE:
-					return character.male == true
-					break;
-				case globals.CHARACTER_FEMALE:
-					return character.male == false
-					break
-				default:
-					return true
-					break;
-			}
-		}).filter(character => {
-			if (state.filter.houses.length > 0) {
-				return state.filter.houses.includes(character.house)
-			}
-			else {
-				return true
-			}
-		})
+		return state.characters
+			.filter(character => character.name.toLowerCase().match(state.filter.search.toLowerCase()))
+			.filter(character => state.filter.imageLink ? character.imageLink != globals.NO_IMAGE : true)
+			.filter(character => state.filter.houses.length > 0 ? state.filter.houses.includes(character.house) : true)
+			.filter(character => {
+				switch (state.filter.gender) {
+					case globals.CHARACTER_MALE:
+						return character.male == true
+						break;
+					case globals.CHARACTER_FEMALE:
+						return character.male == false
+						break
+					default:
+						return true
+						break;
+				}
+			})
 	},
 	houses: state => {
 		return state.houses

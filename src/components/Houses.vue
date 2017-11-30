@@ -1,8 +1,8 @@
 <template>
   <div class="wrapper">
-    <title-component v-bind:number="123"></title-component>
-    <app-modal v-if="modal.show">
-      <h2 slot="header">{{modal.data.name}}</h2>
+    <title-component></title-component>
+    <app-modal v-if="getModalStatus">
+      <!-- <h2 slot="header">{{modal.data.name}}</h2>
       <img  slot="img" v-if="modal.data.imageLink" :src="'https://api.got.show' + modal.data.imageLink" :alt="'image of ' + modal.data.name">
       <img slot="img" v-else src="../assets/img/NoImage.png" alt="No image">
       <div slot="info">
@@ -30,19 +30,18 @@
         <ul v-if="modal.data.words">Words:
           <li>{{modal.data.words}}</li>
         </ul>
-      </div>
+      </div> -->
     </app-modal>
     <div id="image-filter">
       <label for="has-photo">
         <p>Images:</p>
       </label>
-      <input v-model="filterBy.photo" type="checkbox" name="hasPhoto" id="has-photo">
+      <input :checked="imageLinkFilterStatus" @click="imageLinkFilterHandler"  type="checkbox" name="hasPhoto" id="has-photo">
     </div>
     <div id="houses-container">
       <div id="house" v-for="(house, index) in filteredHouses" :key="house._id">
         <h3>{{house.name}}</h3>
-        <img v-if="house.imageLink" :src="'https://api.got.show' + house.imageLink" alt="">
-        <img v-else src="../assets/img/NoImage.png" alt="no image">
+        <img :src="house.imageLink" alt="no image">
         <button v-on:click="getHouseInfo(house, index)" type="button">More info</button>
       </div>
     </div>
@@ -50,76 +49,44 @@
 </template>
 
 <script>
-import Title from '@/components/Title'
-import Modal from '@/components/app/Modal'
+import Title from "@/components/Title";
+import Modal from "@/components/app/Modal";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
-    'title-component': Title,
-    'app-modal': Modal
+    "title-component": Title,
+    "app-modal": Modal
   },
   data() {
-    return {
-      houses: [],
-      filterBy: {
-        search: '',
-        photo: false
-      },
-      modal: {
-        show: false,
-        data: {}
-      }
-    }
-  },
-  created() {
-    this.fetchHouses();
-    Event.$on('close-modal', () => { setTimeout(() => { this.modal.show = false }, 3000) });
-    Event.$on('searching', value => { this.filterBy.search = value })
+    return {};
   },
   computed: {
-    filteredHouses() {
-      return this.houses.filter((house) => {
-        return house.name.toLowerCase().match(this.filterBy.search.toLowerCase())
-      })
-        .filter((house) => {
-          switch (this.filterBy.photo) {
-            case true: return house.imageLink != null;
-              break;
-            default: return house;
-              break;
-          }
-        })
-    }
+    ...mapGetters(["filteredHouses", "imageLinkFilterStatus", "getModalStatus"])
   },
   methods: {
-    fetchHouses() {
-      this.$http.get('houses')
-        .then(response => {
-          this.fetchHousesImages(response.body);
-          Event.$emit('resultsAll', this.houses.length, 'Houses');
-        }, error => {
-          Event.$emit('error', error.status, error.statusText);
-        });
-    },
-    fetchHousesImages(data) {
-      for (let index = 0; index <= data.length - 1; index++) {
-        if(index >= 4 && index <= 104 && index != 5 && index != 7 && index != 64) {
-          data[index].imageLink = null;
-        }
-        this.houses.push(data[index]);
-      }
-    },
+    ...mapActions([
+      "getHouses",
+      "imageLinkFilterHandler",
+      "updateTitleResultMatched"
+    ]),
+
     getHouseInfo(house) {
       this.modal.data = house;
       this.modal.show = true;
     }
   },
-  watch: {
-    filteredHouses: (value) => {
-      Event.$emit('resultsMatched', value.length);
+  created() {
+    if (!this.filteredHouses.length) {
+      this.getHouses("houses");
     }
   },
-}
+  watch: {
+    filteredHouses: function(result) {
+      this.updateTitleResultMatched(result.length);
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -150,7 +117,7 @@ $chocolate: chocolate;
   position: relative;
   cursor: pointer;
   outline: none;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 #image-filter input[type="checkbox"]:checked {
@@ -164,10 +131,10 @@ $chocolate: chocolate;
   height: 1em;
   border-radius: 50%;
   background: #fff;
-  box-shadow: 0 0 .25em rgba(0, 0, 0, .3);
-  transform: scale(.7);
+  box-shadow: 0 0 0.25em rgba(0, 0, 0, 0.3);
+  transform: scale(0.7);
   left: 0;
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
 
 #image-filter input[type="checkbox"]:checked:after {
@@ -191,8 +158,8 @@ $chocolate: chocolate;
   width: 300px;
   height: 420px;
   margin-bottom: 20px;
-  background: rgba(0, 0, 0, .8);
-  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.6);
   text-align: center;
   border-bottom: 1px solid bisque;
   border-right: 1px solid bisque;
@@ -200,7 +167,7 @@ $chocolate: chocolate;
 }
 
 #house h3 {
-  color: #FFE4C4;
+  color: #ffe4c4;
   font-style: italic;
   height: 50px;
 }
@@ -219,7 +186,7 @@ $chocolate: chocolate;
   border-radius: 5px;
   outline: none;
   border: 1px solid transparent;
-  transition: .2s ease-in-out;
+  transition: 0.2s ease-in-out;
 }
 
 #house button:hover {
@@ -230,12 +197,16 @@ $chocolate: chocolate;
 
 #house button:focus {
   animation-name: button-animation;
-  animation-duration: .7s;
+  animation-duration: 0.7s;
 }
 
 @keyframes button-animation {
-  from { transform: scale(1.5, 1); }
-  to { transform: scale(1, 1); }
+  from {
+    transform: scale(1.5, 1);
+  }
+  to {
+    transform: scale(1, 1);
+  }
 }
 
 @media only screen and (max-width: 768px) {
