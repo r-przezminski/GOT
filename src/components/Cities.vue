@@ -11,48 +11,31 @@
 </template>
 
 <script>
-import Title  from '@/components/Title'
+import Title from "@/components/Title";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
-    'title-component': Title
+    "title-component": Title
   },
   data() {
-    return {
-      cities: [],
-      filterBy: {
-        search: ''
-      }
-    }
+    return {};
+  },
+  computed: {
+    ...mapGetters(["filteredCities"])
   },
   methods: {
-      fetchCities() {
-        this.$http.get('cities')
-          .then(response => {
-            this.cities = response.body;
-            Event.$emit('resultsAll', this.cities.length, 'Cities');
-          }, error => {
-            Event.$emit('error', error.status, error.statusText);
-          });
-      },
+    ...mapActions(["getCities", "updateTitleResultMatched"])
   },
-    computed: {
-      filteredCities() {
-        return this.cities.filter((city) => {
-          return city.name.toLowerCase().match(this.filterBy.search.toLowerCase());
-        })
-      }
-    },
-    watch: {
-    filteredCities: (value) => {
-      Event.$emit('resultsMatched', value.length);
-    }
+  created() {
+    this.getCities("cities");
   },
-    created() {
-      this.fetchCities();
-      Event.$on('searching', (value) => { this.filterBy.search = value });
+  watch: {
+    filteredCities: function(result) {
+      this.updateTitleResultMatched(result.length);
     }
   }
+};
 </script>
 
 <style scoped>
@@ -80,8 +63,8 @@ export default {
   width: 300px;
   height: auto;
   margin-bottom: 20px;
-  background: rgba(0, 0, 0, .8);
-  box-shadow: 3px 3px 20px rgba(0, 0, 0, .6);
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.6);
   text-align: center;
   border-bottom: 1px solid bisque;
   border-right: 1px solid bisque;
@@ -105,7 +88,7 @@ export default {
   color: white;
   font-size: 14px;
   border: 1px solid transparent;
-  transition: .2s ease-in-out;
+  transition: 0.2s ease-in-out;
 }
 
 #city a:hover {
@@ -116,11 +99,15 @@ export default {
 
 #city a:focus {
   animation-name: button-animation;
-  animation-duration: .7s;
+  animation-duration: 0.7s;
 }
 
 @keyframes button-animation {
-  from { transform: scale(1.5, 1); }
-  to { transform: scale(1, 1); }
+  from {
+    transform: scale(1.5, 1);
+  }
+  to {
+    transform: scale(1, 1);
+  }
 }
 </style>

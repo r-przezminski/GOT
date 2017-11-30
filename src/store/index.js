@@ -8,6 +8,7 @@ import modal from './modules/modal'
 import filters from './modules/filters'
 import characters from './modules/characters'
 import houses from './modules/houses'
+import cities from './modules/cities'
 
 
 Vue.use(Vuex);
@@ -21,7 +22,8 @@ const store = new Vuex.Store({
 		modal,
 		filters,
 		characters,
-		houses
+		houses,
+		cities
 	},
 	strict: true
 });
