@@ -99,10 +99,8 @@ export default {
     }
   },
   created() {
-    if (!this.filteredCharacters.length) {
-      this.getCharacters("characters");
-      this.getHouses("houses");
-    }
+    this.getCharacters("characters");
+    this.getHouses("houses");
   },
   watch: {
     filteredCharacters: function(result) {

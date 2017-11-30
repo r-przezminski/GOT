@@ -27,8 +27,14 @@ const actions = {
 
 const mutations = {
 	[types.RECEIVE_CITIES]: ((state, cities) => {
-		cities.forEach(city => state.cities.push({ name: city.name, link: city.link }));
+		state.cities = fetchCities(cities)
 	})
+}
+
+function fetchCities(cities) {
+	const fetchedCities = []
+	cities.forEach(city => fetchedCities.push({ name: city.name, link: city.link }));
+	return fetchedCities
 }
 
 export default {

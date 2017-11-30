@@ -79,9 +79,7 @@ export default {
     }
   },
   created() {
-    if (!this.filteredHouses.length) {
-      this.getHouses("houses");
-    }
+    this.getHouses("houses");
   },
   watch: {
     filteredHouses: function(result) {
