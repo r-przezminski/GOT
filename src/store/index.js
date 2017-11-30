@@ -5,7 +5,9 @@ import * as getters from './getters'
 import title from './modules/title'
 import error from './modules/error'
 import modal from './modules/modal'
+import filters from './modules/filters'
 import characters from './modules/characters'
+import houses from './modules/houses'
 
 
 Vue.use(Vuex);
@@ -16,8 +18,10 @@ const store = new Vuex.Store({
 	modules: {
 		title,
 		error,
+		modal,
+		filters,
 		characters,
-		modal
+		houses
 	},
 	strict: true
 });
