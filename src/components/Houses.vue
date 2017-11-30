@@ -2,35 +2,34 @@
   <div class="wrapper">
     <title-component></title-component>
     <app-modal v-if="getModalStatus">
-      <!-- <h2 slot="header">{{modal.data.name}}</h2>
-      <img  slot="img" v-if="modal.data.imageLink" :src="'https://api.got.show' + modal.data.imageLink" :alt="'image of ' + modal.data.name">
-      <img slot="img" v-else src="../assets/img/NoImage.png" alt="No image">
+      <h2 slot="header">{{house.name}}</h2>
+      <img slot="img" :src="house.imageLink" alt="No image">
       <div slot="info">
-        <ul v-if="modal.data.ancestralWeapon && modal.data.ancestralWeapon.length > 0">Ancestral weapon:
-          <li v-for="ancestralWeapon in modal.data.ancestralWeapon" :key="ancestralWeapon.index">{{ancestralWeapon}},</li>
+        <ul>Ancestral weapon:
+          <li v-for="ancestralWeapon in house.ancestralWeapon" :key="ancestralWeapon.index">{{ancestralWeapon}}</li>
         </ul>
-        <ul v-if="modal.data.cadetBranch">Cadet branch:
-          <li>{{modal.data.cadetBranch}}</li>
+        <ul>Cadet branch:
+          <li>{{house.cadetBranch}}</li>
         </ul>
-        <ul v-if="modal.data.coatOfArms">Coat of arms:
-          <li>{{modal.data.coatOfArms}}</li>
+        <ul>Coat of arms:
+          <li>{{house.coatOfArms}}</li>
         </ul>
-        <ul v-if="modal.data.currentLord">Current lord:
-          <li>{{modal.data.currentLord}}</li>
+        <ul>Current lord:
+          <li>{{house.currentLord}}</li>
         </ul>
-        <ul v-if="modal.data.overlord">Overlord:
-          <li>{{modal.data.overlord}}</li>
+        <ul>Overlord:
+          <li>{{house.overlord}}</li>
         </ul>
-        <ul v-if="modal.data.region">Region:
-          <li>{{modal.data.region}}</li>
+        <ul>Region:
+          <li>{{house.region}}</li>
         </ul>
-        <ul v-if="modal.data.title">Title:
-          <li>{{modal.data.title}}</li>
+        <ul>Title:
+          <li>{{house.title}}</li>
         </ul>
-        <ul v-if="modal.data.words">Words:
-          <li>{{modal.data.words}}</li>
+        <ul>Words:
+          <li>{{house.words}}</li>
         </ul>
-      </div> -->
+      </div>
     </app-modal>
     <div id="image-filter">
       <label for="has-photo">
@@ -41,7 +40,7 @@
     <div id="houses-container">
       <div id="house" v-for="(house, index) in filteredHouses" :key="house._id">
         <h3>{{house.name}}</h3>
-        <img :src="house.imageLink" alt="no image">
+        <img :src="house.imageLink" alt="house image">
         <button v-on:click="getHouseInfo(house, index)" type="button">More info</button>
       </div>
     </div>
@@ -59,7 +58,9 @@ export default {
     "app-modal": Modal
   },
   data() {
-    return {};
+    return {
+      house: {}
+    };
   },
   computed: {
     ...mapGetters(["filteredHouses", "imageLinkFilterStatus", "getModalStatus"])
@@ -68,12 +69,13 @@ export default {
     ...mapActions([
       "getHouses",
       "imageLinkFilterHandler",
-      "updateTitleResultMatched"
+      "updateTitleResultMatched",
+      "switchModal"
     ]),
 
     getHouseInfo(house) {
-      this.modal.data = house;
-      this.modal.show = true;
+      this.house = house;
+      this.switchModal();
     }
   },
   created() {

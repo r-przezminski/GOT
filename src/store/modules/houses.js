@@ -36,6 +36,10 @@ const mutations = {
 	},
 }
 
+/**
+ * @param {Object} houses - data from API
+ * @returns {Object} houses - matched data properties 
+ */
 function fetchHouses(houses) {
 	const fetchedHouses = []
 	houses.forEach((house, index) => {
@@ -49,11 +53,17 @@ function fetchHouses(houses) {
 			overlord: house.overlord ? house.overlord : globals.NO_INFO,
 			coatOfArms: house.coatOfArms ? house.coatOfArms : globals.NO_INFO,
 			cadetBranch: house.cadetBranch ? house.cadetBranch : globals.NO_INFO,
-			ancestralWeapon: house.ancestralWeapon ? house.ancestralWeapon : globals.NO_INFO
+			ancestralWeapon: house.ancestralWeapon.length ? house.ancestralWeapon : [globals.NO_INFO]
 		})
 	});
 	return fetchedHouses
 }
+
+/**
+ * @param {String} imageLink - image url
+ * @param {Number} index - house index
+ * @returns {String} image url
+ */
 function buildImageUrl(imageLink, index) {
 	if ((!imageLink) || (index >= 4 && index <= 104 && index != 5 && index != 7 && index != 64)) {
 		return globals.NO_IMAGE
