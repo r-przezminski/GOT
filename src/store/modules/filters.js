@@ -63,4 +63,4 @@ export default {
 	mutations
 }
 
-export const filterState = state
+export const stateFilter = state

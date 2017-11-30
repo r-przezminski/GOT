@@ -1,13 +1,12 @@
 import * as types from '../types'
 import * as globals from '../../config/globals'
-import { filterState as filter } from './filters'
+import { stateFilter as filterBy } from './filters'
 import axios from 'axios'
 import xhr from '../../config/xhr'
 
 const http = axios.create(xhr)
 
 const state = {
-	filter,
 	characters: [],
 	houses: [],
 }
@@ -15,11 +14,11 @@ const state = {
 const getters = {
 	filteredCharacters: state => {
 		return state.characters
-			.filter(character => character.name.toLowerCase().match(state.filter.search.toLowerCase()))
-			.filter(character => state.filter.imageLink ? character.imageLink != globals.NO_IMAGE : true)
-			.filter(character => state.filter.houses.length > 0 ? state.filter.houses.includes(character.house) : true)
+			.filter(character => character.name.toLowerCase().match(filterBy.search.toLowerCase()))
+			.filter(character => filterBy.imageLink ? character.imageLink != globals.NO_IMAGE : true)
+			.filter(character => filterBy.houses.length > 0 ? filterBy.houses.includes(character.house) : true)
 			.filter(character => {
-				switch (state.filter.gender) {
+				switch (filterBy.gender) {
 					case globals.CHARACTER_MALE:
 						return character.male == true
 						break;

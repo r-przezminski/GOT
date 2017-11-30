@@ -1,21 +1,20 @@
 import * as types from '../types'
 import * as globals from '../../config/globals'
-import { filterState as filter } from './filters'
+import { stateFilter as filterBy } from './filters'
 import axios from 'axios'
 import xhr from '../../config/xhr'
 
 const http = axios.create(xhr)
 
 const state = {
-	filter,
 	houses: []
 }
 
 const getters = {
 	filteredHouses: state => {
 		return state.houses
-			.filter(house => house.name.toLowerCase().match(filter.search.toLowerCase()))
-			.filter(house => state.filter.imageLink ? house.imageLink != globals.NO_IMAGE : true)
+			.filter(house => house.name.toLowerCase().match(filterBy.search.toLowerCase()))
+			.filter(house => filterBy.imageLink ? house.imageLink != globals.NO_IMAGE : true)
 	}
 }
 
