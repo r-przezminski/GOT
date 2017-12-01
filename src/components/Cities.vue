@@ -1,7 +1,6 @@
 <template>
   <div class="wrapper">
     <title-component></title-component>
-	{{filteredCities.length}}
     <div id="cities-container">
       <div id="city" v-for="city in filteredCities" :key="city._id">
         <h3>{{city.name}}</h3>
