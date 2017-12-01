@@ -10,18 +10,14 @@ const state = {
 	imageLink: false,
 	gender: globals.CHARACTER_ALL,
 	houses: [],
+	season: globals.SEASON_ALL
 }
 
 const getters = {
-	imageLinkFilterStatus: state => {
-		return state.imageLink
-	},
-	genderFilter: state => {
-		return state.gender
-	},
-	housesFilter: state => {
-		return state.houses
-	},
+	imageLinkFilterStatus: state => state.imageLink,
+	genderFilter: state => state.gender,
+	housesFilter: state => state.houses,
+	seasonFilter: state => state.season
 }
 
 const actions = {
@@ -33,7 +29,8 @@ const actions = {
 	},
 	housesFilterHandler: ({ commit }, houses) => {
 		commit(types.RECEIVE_HOUSES_FILTER, houses)
-	}
+	},
+	seasonFilterHandler: ({ commit }, season) => commit(types.RECEIVE_SESON_FILTER, season)
 }
 
 const mutations = {
@@ -53,7 +50,8 @@ const mutations = {
 		// 	this.state.houses.push(house)
 		// })
 		// TO DO: Remove Do not mutate vuex store state outside mutation handlers.
-	}
+	},
+	[types.RECEIVE_SESON_FILTER]: (state, season) => state.season = season
 }
 
 export default {

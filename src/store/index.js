@@ -9,7 +9,7 @@ import filters from './modules/filters'
 import characters from './modules/characters'
 import houses from './modules/houses'
 import cities from './modules/cities'
-
+import episodes from './modules/episodes'
 
 Vue.use(Vuex);
 
@@ -23,7 +23,8 @@ const store = new Vuex.Store({
 		filters,
 		characters,
 		houses,
-		cities
+		cities,
+		episodes
 	},
 	strict: true
 });

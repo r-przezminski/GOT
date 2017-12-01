@@ -5,3 +5,4 @@ export const NO_IMAGE = require('@/assets/img/NoImage.png')
 export const CHARACTER_MALE = "Male"
 export const CHARACTER_FEMALE = "Female"
 export const CHARACTER_ALL = "All"
+export const SEASON_ALL = "All"

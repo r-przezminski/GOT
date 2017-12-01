@@ -4,7 +4,7 @@
     <div id="characters-in-episode"></div>
     <div id="filter">
       <label for="seasons-filter">Seasons: </label>
-      <v-select v-model="filterBy.seasons.value" :options="filterBy.seasons.options" id="seasons-filter"></v-select>
+      <v-select :value="seasonFilter" :on-change="seasonFilterHandler" :options="seasons" id="seasons-filter"></v-select>
     </div>
     <div id="container">
       <div id="episodes-container">
@@ -20,7 +20,7 @@
           <div class="episode-body">
             <p>Characters:</p>
             <div class="characters">
-              <p v-on:mouseover="getCharacterImage(character)" v-for="character in episode.characters" :key="character.index">{{character}},</p>
+              <p v-for="character in episode.characters" :key="character.index">{{character}},</p>
             </div>
           </div>
         </div>
@@ -32,6 +32,7 @@
 <script>
 import Title from "@/components/Title";
 import vSelect from "vue-select";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
   components: {
@@ -39,71 +40,24 @@ export default {
     "v-select": vSelect
   },
   data() {
-    return {
-      filterBy: {
-        search: "",
-        seasons: {
-          options: ["All"],
-          value: "All"
-        }
-      },
-      episodes: [],
-      seasons: [],
-    };
+    return {};
   },
   computed: {
-    filteredEpisodes() {
-      return this.episodes
-        .filter(episode => {
-          return episode.name
-            .toLowerCase()
-            .match(this.filterBy.search.toLowerCase());
-        })
-        .filter(episode => {
-          if (this.filterBy.seasons.value === "All") {
-            return episode;
-          } else {
-            return episode.season == this.filterBy.seasons.value.slice(-1);
-          }
-        });
-    }
+    ...mapGetters(["filteredEpisodes", "seasons", "seasonFilter"])
   },
   methods: {
-    fetchEpisodes() {
-      this.$http.get("episodes").then(
-        response => {
-          this.sortEpisodes(response.body);
-          Event.$emit("resultsAll", this.episodes.length, "Episodes");
-          this.fetchSeasons(response.body);
-        },
-        error => {
-          Event.$emit("error", error.status, error.statusText);
-        }
-      );
-    },
-    fetchSeasons(data) {
-      for (let index = 0; index < data.length; index++) {
-        if (!this.seasons.includes(data[index].season)) {
-          this.seasons.push(data[index].season);
-          this.filterBy.seasons.options.push("Season " + data[index].season);
-        }
-      }
-    },
-    sortEpisodes(data) {
-      this.episodes = data.sort((a, b) => {
-        return a.totalNr - b.totalNr;
-      });
-    },
+    ...mapActions([
+      "getEpisodes",
+      "updateTitleResultMatched",
+      "seasonFilterHandler"
+    ])
   },
   created() {
-    this.fetchEpisodes();
-    Event.$on("searching", value => {
-      this.filterBy.search = value;
-    });
+    this.getEpisodes("episodes");
   },
   watch: {
-    filteredEpisodes: value => {
-      Event.$emit("resultsMatched", value.length);
+    filteredEpisodes: function(result) {
+      this.updateTitleResultMatched(result.length);
     }
   }
 };
