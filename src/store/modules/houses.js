@@ -20,19 +20,17 @@ const getters = {
 
 const actions = {
 	getHouses: ({ commit }, url) => {
-		http.get(url).then(response => {
-			commit(types.RECEIVE_HOUSES, response.data)
-			commit(types.RECEIVE_TITLE_RESULT_ALL, response.data.length)
-		}).catch(error => {
-			commit(types.RECEIVE_ERROR, error)
-		})
+		http.get(url)
+			.then(response => {
+				commit(types.RECEIVE_HOUSES, response.data)
+				commit(types.RECEIVE_TITLE_RESULT_ALL, response.data.length)
+			})
+			.catch(error => commit(types.RECEIVE_ERROR, error))
 	}
 }
 
 const mutations = {
-	[types.RECEIVE_HOUSES]: (state, houses) => {
-		state.houses = fetchHouses(houses)
-	},
+	[types.RECEIVE_HOUSES]: (state, houses) => state.houses = fetchHouses(houses),
 }
 
 /**

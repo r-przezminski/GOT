@@ -6,21 +6,15 @@ const state = {
 }
 
 const getters = {
-	getModalStatus: state => {
-		return state.status
-	},
+	getModalStatus: state => state.status
 }
 
 const actions = {
-	switchModal: ({ commit }) => {
-		commit(types.SWITCH_MODAL)
-	}
+	switchModal: ({ commit }) => commit(types.SWITCH_MODAL)
 }
 
 const mutations = {
-	[types.SWITCH_MODAL]: state => {
-		state.status = !state.status
-	}
+	[types.SWITCH_MODAL]: state => state.status = !state.status
 }
 
 export default {

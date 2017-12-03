@@ -15,19 +15,15 @@ const getters = {
 	filteredCharacters: state => {
 		return state.characters
 			.filter(character => character.name.toLowerCase().match(filterBy.search.toLowerCase()))
-			.filter(character => filterBy.imageLink ? character.imageLink != globals.NO_IMAGE : true)
+			.filter(character => filterBy.imageLink ? character.imageLink !== globals.NO_IMAGE : true)
 			.filter(character => filterBy.houses.length > 0 ? filterBy.houses.includes(character.house) : true)
 			.filter(character => {
-				switch (filterBy.gender) {
-					case globals.CHARACTER_MALE:
-						return character.male == true
-						break;
-					case globals.CHARACTER_FEMALE:
-						return character.male == false
-						break
-					default:
-						return true
-						break;
+				if (!filterBy.gender || filterBy.gender === globals.CHARACTER_ALL) {
+					return true
+				} else if (filterBy.gender === globals.CHARACTER_MALE) {
+					return character.male === true
+				} else {
+					return character.male === false
 				}
 			})
 	},
@@ -38,29 +34,23 @@ const getters = {
 
 const actions = {
 	getCharacters: ({ commit }, url) => {
-		http.get(url).then(response => {
-			commit(types.RECEIVE_CHARACTERS, response.data)
-			commit(types.RECEIVE_TITLE_RESULT_ALL, response.data.length)
-		}).catch(error => {
-			commit(types.RECEIVE_ERROR, error)
-		});
+		http.get(url)
+			.then(response => {
+				commit(types.RECEIVE_CHARACTERS, response.data)
+				commit(types.RECEIVE_TITLE_RESULT_ALL, response.data.length)
+			})
+			.catch(error => commit(types.RECEIVE_ERROR, error));
 	},
 	getHouses: ({ commit }, url) => {
-		http.get(url).then(response => {
-			commit(types.RECEIVE_HOUSES, response.data)
-		}).catch(error => {
-			commit(types.RECEIVE_ERROR, error)
-		});
+		http.get(url)
+			.then(response => commit(types.RECEIVE_HOUSES, response.data))
+			.catch(error => commit(types.RECEIVE_ERROR, error));
 	},
 }
 
 const mutations = {
-	[types.RECEIVE_CHARACTERS]: (state, characters) => {
-		state.characters = fetchCharacters(characters)
-	},
-	[types.RECEIVE_HOUSES]: (state, houses) => {
-		state.houses = fetchHouses(houses)
-	},
+	[types.RECEIVE_CHARACTERS]: (state, characters) => state.characters = fetchCharacters(characters),
+	[types.RECEIVE_HOUSES]: (state, houses) => state.houses = fetchHouses(houses)
 }
 
 /**
@@ -93,9 +83,7 @@ const fetchCharacters = characters => {
  */
 const fetchHouses = houses => {
 	const fetchedHouses = []
-	houses.forEach(house => {
-		fetchedHouses.push(house.name)
-	});
+	houses.forEach(house => fetchedHouses.push(house.name));
 	return fetchedHouses;
 }
 

@@ -21,28 +21,17 @@ const getters = {
 }
 
 const actions = {
-	imageLinkFilterHandler: ({ commit }) => {
-		commit(types.SWITCH_IMAGE_FILTER)
-	},
-	genderFilterHandler: ({ commit }, gender) => {
-		commit(types.RECEIVE_GENDER_FILTER, gender)
-	},
-	housesFilterHandler: ({ commit }, houses) => {
-		commit(types.RECEIVE_HOUSES_FILTER, houses)
-	},
+	imageLinkFilterHandler: ({ commit }) => commit(types.SWITCH_IMAGE_FILTER),
+	genderFilterHandler: ({ commit }, gender) => commit(types.RECEIVE_GENDER_FILTER, gender),
+	housesFilterHandler: ({ commit }, houses) => commit(types.RECEIVE_HOUSES_FILTER, houses),
 	seasonFilterHandler: ({ commit }, season) => commit(types.RECEIVE_SESON_FILTER, season)
 }
 
 const mutations = {
-	[types.RECEIVE_SEARCH_FILTER]: (state, search) => {
-		state.search = search
-	},
-	[types.SWITCH_IMAGE_FILTER]: (state) => {
-		state.imageLink = !state.imageLink
-	},
-	[types.RECEIVE_GENDER_FILTER]: (state, gender) => {
-		state.gender = gender
-	},
+	[types.RECEIVE_SEARCH_FILTER]: (state, search) => state.search = search,
+	[types.SWITCH_IMAGE_FILTER]: (state) => state.imageLink = !state.imageLink,
+	[types.RECEIVE_GENDER_FILTER]: (state, gender) => state.gender = gender,
+	[types.RECEIVE_SESON_FILTER]: (state, season) => state.season = season,
 	[types.RECEIVE_HOUSES_FILTER]: (state, houses) => {
 		state.houses = houses
 		// console.log(houses);
@@ -51,7 +40,6 @@ const mutations = {
 		// })
 		// TO DO: Remove Do not mutate vuex store state outside mutation handlers.
 	},
-	[types.RECEIVE_SESON_FILTER]: (state, season) => state.season = season
 }
 
 export default {
