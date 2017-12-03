@@ -12,45 +12,20 @@ const state = {
 }
 
 const getters = {
-	label: state => {
-		return state.label
-	},
-
-	matched: state => {
-		return state.matched
-	},
-
-	all: state => {
-		return state.all
-	}
+	label: state => state.label,
+	matched: state => state.matched,
+	all: state => state.all
 }
 
 const actions = {
-	getLabel: ({ commit }, label) => {
-		commit(types.RECEIVE_LABEL, label)
-	},
-
-	updateTitleResultMatched: ({ commit }, value) => {
-		commit(types.UPDATE_TITLE_RESULT_MATCHED, value)
-	},
-
-	// getTitleResultAll: ({ commit }, value) => {
-
-	// }
+	getLabel: ({ commit }, label) => commit(types.RECEIVE_LABEL, label),
+	updateTitleResultMatched: ({ commit }, value) => commit(types.UPDATE_TITLE_RESULT_MATCHED, value),
 }
 
 const mutations = {
-	[types.RECEIVE_LABEL]: (state, label) => {
-		state.label = label
-	},
-
-	[types.UPDATE_TITLE_RESULT_MATCHED]: (state, matched) => {
-		state.matched = matched
-	},
-
-	[types.RECEIVE_TITLE_RESULT_ALL]: (state, all) => {
-		state.all = all
-	}
+	[types.RECEIVE_LABEL]: (state, label) => state.label = label,
+	[types.UPDATE_TITLE_RESULT_MATCHED]: (state, matched) => state.matched = matched,
+	[types.RECEIVE_TITLE_RESULT_ALL]: (state, all) => state.all = all
 }
 
 export default {
