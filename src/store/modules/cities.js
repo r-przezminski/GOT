@@ -16,8 +16,10 @@ const getters = {
 
 const actions = {
 	getCities: ({ commit }, url) => {
+		commit(types.START_LOADING, true)
 		http.get(url)
 			.then(response => {
+				commit(types.END_LOADING, false)
 				commit(types.RECEIVE_CITIES, response.data)
 				commit(types.RECEIVE_TITLE_RESULT_ALL, response.data.length)
 			})

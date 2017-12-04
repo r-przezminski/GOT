@@ -4,6 +4,7 @@ import * as actions from './actions'
 import * as getters from './getters'
 import title from './modules/title'
 import error from './modules/error'
+import loading from './modules/loading'
 import modal from './modules/modal'
 import filters from './modules/filters'
 import characters from './modules/characters'
@@ -19,6 +20,7 @@ const store = new Vuex.Store({
 	modules: {
 		title,
 		error,
+		loading,
 		modal,
 		filters,
 		characters,

@@ -34,8 +34,10 @@ const getters = {
 
 const actions = {
 	getCharacters: ({ commit }, url) => {
+		commit(types.START_LOADING, true)
 		http.get(url)
 			.then(response => {
+				commit(types.END_LOADING, false)
 				commit(types.RECEIVE_CHARACTERS, response.data)
 				commit(types.RECEIVE_TITLE_RESULT_ALL, response.data.length)
 			})
