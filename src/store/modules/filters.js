@@ -1,9 +1,5 @@
 import * as types from '../types'
 import * as globals from '../../config/globals'
-import axios from 'axios'
-import xhr from '../../config/xhr'
-
-const http = axios.create(xhr)
 
 const state = {
 	search: '',
@@ -34,11 +30,6 @@ const mutations = {
 	[types.RECEIVE_SESON_FILTER]: (state, season) => state.season = season,
 	[types.RECEIVE_HOUSES_FILTER]: (state, houses) => {
 		state.houses = houses
-		// console.log(houses);
-		// houses.forEach(house => {
-		// 	this.state.houses.push(house)
-		// })
-		// TO DO: Remove Do not mutate vuex store state outside mutation handlers.
 	},
 }
 

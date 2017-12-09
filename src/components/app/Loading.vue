@@ -6,13 +6,21 @@
 </template>
 
 <script>
-export default {}
+export default {};
 </script>
 
 <style scoped>
-.loading i {
-  width: 100%;
-  margin: 100px auto;
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  height: 100vh;
+  width: 100vw;
+  background-color: #d8d8d8be;
 }
 </style>
 

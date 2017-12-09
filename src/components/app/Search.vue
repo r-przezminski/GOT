@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="search">
-      <input v-model="search" v-on:keyup="searching(search)" type="text" placeholder="Search...">
+      <input v-model="search" @keyup="searching(search)" type="text" placeholder="Search...">
       <i class="fa fa-search" aria-hidden="true"></i>
     </div>
   </div>
@@ -13,25 +13,11 @@ import { mapActions } from "vuex";
 export default {
   data() {
     return {
-      search: "",
-      results: {
-        visible: false,
-        label: "",
-        all: 0,
-        matched: 0
-      }
+      search: ""
     };
   },
   methods: {
-    // searching() {
-    //   Event.$emit('searching', this.search);
-    // },
     ...mapActions(["searching"])
-  },
-  created() {
-    Event.$on("clearFilter", () => {
-      this.search = "";
-    });
   },
   computed: {
     triggerResults() {

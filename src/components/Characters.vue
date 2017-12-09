@@ -86,7 +86,7 @@ export default {
   methods: {
     ...mapActions([
       "getCharacters",
-      "getHouses",
+      "getFilterOptionsHouses",
       "imageLinkFilterHandler",
       "genderFilterHandler",
       "housesFilterHandler",
@@ -100,7 +100,7 @@ export default {
   },
   created() {
     this.getCharacters("characters");
-    this.getHouses("houses");
+    this.getFilterOptionsHouses("houses");
   },
   watch: {
     filteredCharacters: function(result) {

@@ -27,9 +27,7 @@ const getters = {
 				}
 			})
 	},
-	houses: state => {
-		return state.houses
-	},
+	houses: state => state.houses
 }
 
 const actions = {
@@ -37,22 +35,25 @@ const actions = {
 		commit(types.START_LOADING, true)
 		http.get(url)
 			.then(response => {
-				commit(types.END_LOADING, false)
 				commit(types.RECEIVE_CHARACTERS, response.data)
 				commit(types.RECEIVE_TITLE_RESULT_ALL, response.data.length)
+				commit(types.END_LOADING, false)
 			})
-			.catch(error => commit(types.RECEIVE_ERROR, error));
+			.catch(error => {
+				commit(types.RECEIVE_ERROR, error.response)
+				commit(types.END_LOADING, false)
+			});
 	},
-	getHouses: ({ commit }, url) => {
+	getFilterOptionsHouses: ({ commit }, url) => {
 		http.get(url)
-			.then(response => commit(types.RECEIVE_HOUSES, response.data))
-			.catch(error => commit(types.RECEIVE_ERROR, error));
+			.then(response => commit(types.RECEIVE_HOUSES_OPTIONS_FILTER, response.data))
+			.catch(error => commit(types.RECEIVE_ERROR, error.response));
 	},
 }
 
 const mutations = {
 	[types.RECEIVE_CHARACTERS]: (state, characters) => state.characters = fetchCharacters(characters),
-	[types.RECEIVE_HOUSES]: (state, houses) => state.houses = fetchHouses(houses)
+	[types.RECEIVE_HOUSES_OPTIONS_FILTER]: (state, houses) => state.houses = fetchHouses(houses)
 }
 
 /**

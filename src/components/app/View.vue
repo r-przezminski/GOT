@@ -1,8 +1,8 @@
 <template>
   <main>
-    <app-loading v-show="isLoading"></app-loading>
-    <app-error v-show="error"></app-error>
-    <router-view :class="{'view-show': !isLoading}" class="view"></router-view>
+    <app-loading v-if="isLoading"></app-loading>
+    <app-error v-show="isError"></app-error>
+    <router-view v-show="!isError" :class="[isLoading ? '' : 'show']" class="view"></router-view>
   </main>
 </template>
 
@@ -18,16 +18,8 @@ export default {
     "app-error": Error
   },
   computed: {
-    ...mapGetters(["isLoading"])
-  },
-  data() {
-    return {
-      main: true,
-      loading: false,
-      error: false
-    };
-  },
-  created() {}
+    ...mapGetters(["isLoading", "isError"])
+  }
 };
 </script>
 
@@ -50,10 +42,10 @@ main {
 
 .view {
   opacity: 0;
-  transition: 1s ease;
+  transition: 0.5s linear;
 }
 
-.view-show {
+.show {
   opacity: 1;
 }
 
