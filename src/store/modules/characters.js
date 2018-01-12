@@ -1,10 +1,7 @@
-import * as types from '../types'
-import * as globals from '../../config/globals'
-import { stateFilter as filterBy } from './filters'
-import axios from 'axios'
-import xhr from '../../config/xhr'
-
-const http = axios.create(xhr)
+import * as types from '../types';
+import * as globals from '../../config/globals';
+import { stateFilter as filterBy } from './filters';
+import http from '../../config/httpApiRequest';
 
 const state = {
 	characters: [],
@@ -19,36 +16,15 @@ const getters = {
 			.filter(character => filterBy.houses.length > 0 ? filterBy.houses.includes(character.house) : true)
 			.filter(character => {
 				if (!filterBy.gender || filterBy.gender === globals.CHARACTER_ALL) {
-					return true
+					return true;
 				} else if (filterBy.gender === globals.CHARACTER_MALE) {
-					return character.male === true
+					return character.male === true;
 				} else {
-					return character.male === false
+					return character.male === false;
 				}
 			})
 	},
 	houses: state => state.houses
-}
-
-const actions = {
-	getCharacters: ({ commit }, url) => {
-		commit(types.START_LOADING, true)
-		http.get(url)
-			.then(response => {
-				commit(types.RECEIVE_CHARACTERS, response.data)
-				commit(types.RECEIVE_TITLE_RESULT_ALL, response.data.length)
-				commit(types.END_LOADING, false)
-			})
-			.catch(error => {
-				commit(types.RECEIVE_ERROR, error.response)
-				commit(types.END_LOADING, false)
-			});
-	},
-	getFilterOptionsHouses: ({ commit }, url) => {
-		http.get(url)
-			.then(response => commit(types.RECEIVE_HOUSES_OPTIONS_FILTER, response.data))
-			.catch(error => commit(types.RECEIVE_ERROR, error.response));
-	},
 }
 
 const mutations = {
@@ -56,15 +32,27 @@ const mutations = {
 	[types.RECEIVE_HOUSES_OPTIONS_FILTER]: (state, houses) => state.houses = fetchHouses(houses)
 }
 
-/**
- * @param {Object} characters - data from API
- * @returns {Object} characters - matched data properties 
- */
+const actions = {
+	getCharacters: ({ commit }, url) => {
+		http.get(url.houses)
+			.then(response => {
+				commit(types.RECEIVE_HOUSES_OPTIONS_FILTER, response.data);
+				return http.get(url.characters);
+			})
+			.then(response => {
+				commit(types.RECEIVE_CHARACTERS, response.data);
+				commit(types.RECEIVE_TITLE_RESULT_ALL, response.data.length);
+			})
+			.catch(error => {
+				commit(types.RECEIVE_ERROR, error.response);
+			});
+	}
+}
+
 const fetchCharacters = characters => {
-	const fetchedCharacters = []
+	const fetchedCharacters = [];
 	characters.forEach(character => {
 		fetchedCharacters.push({
-			id: character._id,
 			name: character.name,
 			male: character.male,
 			imageLink: character.imageLink ? globals.BASE_API_URL + character.imageLink : globals.NO_IMAGE,
@@ -80,12 +68,8 @@ const fetchCharacters = characters => {
 	return fetchedCharacters;
 }
 
-/**
- * @param {Object} houses - data from API
- * @returns {array} houses - array of houses name 
- */
 const fetchHouses = houses => {
-	const fetchedHouses = []
+	const fetchedHouses = [];
 	houses.forEach(house => fetchedHouses.push(house.name));
 	return fetchedHouses;
 }
@@ -93,6 +77,6 @@ const fetchHouses = houses => {
 export default {
 	state,
 	getters,
-	actions,
-	mutations
+	mutations,
+	actions
 }

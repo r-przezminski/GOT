@@ -1,5 +1,5 @@
-import * as types from '../types'
-import * as globals from '../../config/globals'
+import * as types from '../types';
+import * as globals from '../../config/globals';
 
 const state = {
 	search: '',
@@ -28,9 +28,7 @@ const mutations = {
 	[types.SWITCH_IMAGE_FILTER]: (state) => state.imageLink = !state.imageLink,
 	[types.RECEIVE_GENDER_FILTER]: (state, gender) => state.gender = gender,
 	[types.RECEIVE_SESON_FILTER]: (state, season) => state.season = season,
-	[types.RECEIVE_HOUSES_FILTER]: (state, houses) => {
-		state.houses = houses
-	},
+	[types.RECEIVE_HOUSES_FILTER]: (state, houses) => state.houses = houses
 }
 
 export default {

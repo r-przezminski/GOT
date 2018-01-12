@@ -1,5 +1,5 @@
-import * as types from '../types'
-import * as globals from '../../config/globals'
+import * as types from '../types';
+import * as globals from '../../config/globals';
 
 const state = {
 	error: false,
@@ -19,6 +19,7 @@ const actions = {
 
 const mutations = {
 	[types.RECEIVE_ERROR]: (state, error) => {
+		console.log(error)
 		state.error = true
 		if (error && error.status && error.statusText) {
 			state.code = error.status

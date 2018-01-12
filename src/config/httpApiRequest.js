@@ -1,4 +1,6 @@
-export default {
+import axios from "axios";
+
+const httpApiRequest = {
 	method: 'get',
 	baseURL: 'https://api.got.show/api/',
 	responseType: 'json',
@@ -6,7 +8,7 @@ export default {
 	xsrfHeaderName: 'X-XSRF-TOKEN',
 	headers: { 'X-Requested-With': 'XMLHttpRequest' },
 	maxRedirects: 5,
-	// timeout: 2000,
+	// timeout: 1000,
 	// maxContentLength: 2000,
 	transformRequest: [function (data, headers) {
 		return data;
@@ -18,3 +20,5 @@ export default {
 		return status >= 200 && status < 300;
 	},
 };
+
+export default axios.create(httpApiRequest);
