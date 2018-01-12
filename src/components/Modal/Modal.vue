@@ -96,10 +96,11 @@ export default {
 	}
 
 	.mask__button {
+		@include button;
 		display: none;
 
 		@include mq(480px) {
-			@include button;
+			display: block;
 			margin: 35px auto;
 		}
 	}
