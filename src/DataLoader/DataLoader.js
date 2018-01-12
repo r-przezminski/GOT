@@ -38,8 +38,8 @@ export default {
 	handleData: function () {
 		this.initScrollCounter();
 		if (this.isLastPage() || !this.shouldChangePage()) return;
-		this.changePage();
-		this.loader = this.chunks[this.page];
+			this.changePage();
+			this.loader = this.chunks[this.page];
 		},
 	load: function () {
 		return this.loader;
