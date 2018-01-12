@@ -1,0 +1,42 @@
+@import './variables.scss';
+
+@mixin card {
+	border-radius: 10px;
+	border-right: solid 1px $bisque;
+	border-bottom: solid 1px $bisque;
+	background-color: $black-transparent;
+	box-shadow: 3px 3px 20px rgba(0, 0, 0, 0.6);
+} 
+
+@mixin button {
+	min-width: 150px;
+	height: 40px;
+	border-radius: 10px;
+	background-color: $chocolate;
+	color: $white;
+	outline: none;
+	border: 1px solid transparent; 
+	transition: .3s ease-in-out;
+
+	&:hover {
+		cursor: pointer;
+		border-top: 1px solid $bisque;
+		border-left: 1px solid $bisque;
+	}
+}
+
+@mixin title {
+	color: $bisque;
+	font-style: italic;
+}
+
+@mixin filter {
+	width: 75%;
+	margin: 0 auto;
+}
+
+@mixin mq($width) {
+	@media screen and (max-width: $width) {
+		@content;
+	}
+}
