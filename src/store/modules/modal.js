@@ -23,7 +23,7 @@ const mutations = {
 
 function fetchData(data) {
 	const info = { name: data.name, imageLink: data.imageLink };
-	const { name, imageLink, male, kupka,  ...details } = data;
+	const { name, imageLink, male, kupka, ...details } = data;
 	return {
 		info: info,
 		details: details
