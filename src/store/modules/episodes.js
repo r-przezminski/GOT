@@ -34,25 +34,19 @@ const actions = {
 	}
 }
 
-function fetchEpisodes(episodes) {
-	const fetchedEpisodes = [];
-	episodes.forEach(episode => {
-		fetchedEpisodes.push({
+const fetchEpisodes = episodes => {
+	return episodes.map(episode => {
+		return {
 			name: episode.name,
 			season: episode.season,
 			totalNr: episode.totalNr,
 			director: episode.director,
 			characters: episode.characters
-		})
-	});
-	return sortEpisodes(fetchedEpisodes);
+		}
+	}).sort((a, b) => a.totalNr - b.totalNr);
 }
 
-function sortEpisodes(episodes) {
-	return episodes.sort((a, b) => a.totalNr - b.totalNr);
-}
-
-function fetchSeasonsFrom(episodes) {
+const fetchSeasonsFrom = episodes => {
 	let seasons = ['All'];
 	episodes.forEach(episode => seasons.push(`Season ${episode.season}`));
 	seasons = new Set(seasons);
