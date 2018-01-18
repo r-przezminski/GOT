@@ -29,7 +29,7 @@ const getters = {
 
 const mutations = {
 	[types.RECEIVE_CHARACTERS]: (state, characters) => state.characters = fetchCharacters(characters),
-	[types.RECEIVE_HOUSES_OPTIONS_FILTER]: (state, houses) => state.houses = fetchHouses(houses)
+	[types.RECEIVE_HOUSES_OPTIONS_FILTER]: (state, houses) => state.houses = houses.map(house => house.name)
 }
 
 const actions = {
@@ -50,9 +50,8 @@ const actions = {
 }
 
 const fetchCharacters = characters => {
-	const fetchedCharacters = [];
-	characters.forEach(character => {
-		fetchedCharacters.push({
+	return characters.map(character => {
+		return {
 			name: character.name,
 			male: character.male,
 			imageLink: character.imageLink ? globals.BASE_API_URL + character.imageLink : globals.NO_IMAGE,
@@ -63,15 +62,8 @@ const fetchCharacters = characters => {
 			spouse: character.spouse ? character.spouse : globals.NO_INFO,
 			dateOfBirth: character.dateOfBirth ? character.dateOfBirth : globals.NO_INFO,
 			dateOfDeath: character.dateOfDeath ? character.dateOfDeath : globals.NO_INFO,
-		})
+		}
 	});
-	return fetchedCharacters;
-}
-
-const fetchHouses = houses => {
-	const fetchedHouses = [];
-	houses.forEach(house => fetchedHouses.push(house.name));
-	return fetchedHouses;
 }
 
 export default {
