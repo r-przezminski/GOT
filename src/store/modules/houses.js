@@ -32,10 +32,9 @@ const actions = {
 	}
 }
 
-function fetchHouses(houses) {
-	const fetchedHouses = [];
-	houses.forEach((house, index) => {
-		fetchedHouses.push({
+const fetchHouses = houses => {
+	return houses.map((house, index) => {
+		return {
 			name: house.name,
 			imageLink: buildImageUrl(house.imageLink, index),
 			title: house.title ? house.title : globals.NO_INFO,
@@ -46,12 +45,11 @@ function fetchHouses(houses) {
 			coatOfArms: house.coatOfArms ? house.coatOfArms : globals.NO_INFO,
 			cadetBranch: house.cadetBranch ? house.cadetBranch : globals.NO_INFO,
 			ancestralWeapon: house.ancestralWeapon.length ? house.ancestralWeapon : [globals.NO_INFO]
-		})
+		}
 	});
-	return fetchedHouses;
 }
 
-function buildImageUrl(imageLink, index) {
+const buildImageUrl = (imageLink, index) => {
 	if ((!imageLink) || (index >= 4 && index <= 104 && index != 5 && index != 7 && index != 64)) {
 		return globals.NO_IMAGE;
 	}
