@@ -12,7 +12,12 @@ const getters = {
 }
 
 const mutations = {
-	[types.RECEIVE_CITIES]: ((state, cities) => state.cities = fetchCities(cities))
+	[types.RECEIVE_CITIES]: ((state, cities) => state.cities = cities.map(city => {
+		return {
+			name: city.name,
+			link: city.link
+		}
+	}))
 }
 
 const actions = {
@@ -26,12 +31,6 @@ const actions = {
 				commit(types.RECEIVE_ERROR, error.response);
 			})
 	}
-}
-
-function fetchCities(cities) {
-	const fetchedCities = [];
-	cities.forEach(city => fetchedCities.push({ name: city.name, link: city.link }));
-	return fetchedCities;
 }
 
 export default {
