@@ -5,63 +5,41 @@ import axios from 'axios';
 let cancelRequest;
 
 const state = {
-	x: null,
-	y: null,
-	show: null,
-	isLoading: null,
-	url: null,
-	isSucces: null,
-	hasImg: null
+	response: {},
+	toolTip: {}
 }
 
 const getters = {
-	toolTip: state => {
-		return {
-			x: state.x,
-			y: state.y,
-			show: state.show,
-			isLoading: state.isLoading
-		}
-	},
-	toolTipResponse: state => {
-		return {
-			url: state.url,
-			isSucces: state.isSucces,
-			hasImg: state.hasImg
-		}
-	}
+	toolTip: state => state.toolTip,
+	toolTipResponse: state => state.response 
 }
 
 const mutations = {
 	[types.RECEIVE_TOOL_TIP]: (state, toolTip) => {
-		state.x = `${ toolTip.x - 85 }px`;
-		state.y = toolTip.y >= 300 ? `${ toolTip.y + toolTip.scrollY - 220 }px` : `${ toolTip.y + toolTip.scrollY + 50 }px`;
-		state.show = true;
-		state.isLoading = true;
+		state.toolTip = {
+			x: `${ toolTip.cursorX - 85 }px`,
+			y: toolTip.cursorY >= 300 ? `${ toolTip.cursorY + toolTip.scrollY - 220 }px` : `${ toolTip.cursorY + toolTip.scrollY + 50 }px`,
+			show: true,
+			isLoading: true
+		}
 	},
 	[types.RECEIVE_TOOL_TIP_RESPONSE]: (state, response) => {
-		state.url = response.url;
-		state.hasImg = response.hasImg;
-		state.isSucces = response.succes;
-		state.isLoading = false;
+		state.response = {
+			url: response.url,
+			hasImg: response.hasImg,
+			isSucces: response.succes,
+		};
+		state.toolTip.isLoading = false;
 	},
 	[types.RESET_TOOL_TIP]: state => {
-		state.x = null;
-		state.y = null;
-		state.show = false;
-		state.url = null;
-		state.isSucces = null;
+		state.response = {},
+		state.toolTip = {}
 	}
 }
 
 const actions = {
 	handleToolTip: ({ commit }, options) => {
-		const toolTip = {
-			x: options.cursorX,
-			y: options.cursorY,
-			scrollY: options.scrollY
-		}
-		commit(types.RECEIVE_TOOL_TIP, toolTip);
+		commit(types.RECEIVE_TOOL_TIP, options);
 	},
 	handleToolTipRequest: ({ commit }, name) => {
 		const res = {};
